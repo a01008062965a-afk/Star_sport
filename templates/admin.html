@@ -1,0 +1,135 @@
+cat > templates/admin.html << 'ENDOFFILE'
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الأدمن — استار سبورت</title>
+<style>
+  * { box-sizing:border-box; font-family:'Tahoma', sans-serif; }
+  body { margin:0; background:#f4f6f9; color:#222; }
+  header { background:linear-gradient(90deg,#0f2027,#2c5364); color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { margin:0; font-size:20px; }
+  header .info { font-size:13px; color:#ffd200; }
+  header a { color:#fff; text-decoration:none; font-size:14px; }
+  .container { padding:20px; max-width:900px; margin:0 auto; }
+  .tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .tab { padding:10px 20px; background:#fff; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px; border:2px solid transparent; }
+  .tab.active { border-color:#2c5364; color:#2c5364; }
+  .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+  .row { display:flex; justify-content:space-between; align-items:center; }
+  .phone { font-size:17px; font-weight:bold; color:#0f2027; direction:ltr; }
+  .name { color:#666; font-size:14px; margin-top:4px; }
+  .meta { font-size:13px; color:#888; margin-top:6px; }
+  .badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; }
+  .pending { background:#fff3e0; color:#ef6c00; }
+  .approved { background:#e8f5e9; color:#2e7d32; }
+  .rejected { background:#ffebee; color:#c62828; }
+  .active-b { background:#e8f5e9; color:#2e7d32; }
+  .expired-b { background:#ffebee; color:#c62828; }
+  .actions { display:flex; gap:8px; margin-top:10px; }
+  .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px; }
+  .btn-ok { background:#25D366; color:#fff; }
+  .btn-no { background:#e53935; color:#fff; }
+  .empty { text-align:center; color:#999; padding:40px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🏆 لوحة تحكم استار سبورت</h1>
+    <div class="info">أهلاً {{ admin_name }} — {{ admin_role }}</div>
+  </div>
+  <a href="/admin/logout">خروج</a>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('requests', this)">📥 طلبات التجديد</div>
+    <div class="tab" onclick="switchTab('users', this)">👥 المشتركين</div>
+  </div>
+  <div id="requestsView"></div>
+  <div id="usersView" class="hidden"></div>
+</div>
+
+<script>
+const ROLE = "{{ admin_role }}";
+
+async function loadRequests() {
+  const res = await fetch('/api/admin/requests');
+  const reqs = await res.json();
+  const box = document.getElementById('requestsView');
+  if (!reqs.length) { box.innerHTML = '<div class="empty">مفيش طلبات حالياً</div>'; return; }
+  box.innerHTML = reqs.map(r => `
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="phone">${r.phone}</div>
+          <div class="name">${r.name || '-'}</div>
+          <div class="meta">المدة: ${r.months} شهر — ${r.created_at}</div>
+          ${r.handled_by ? `<div class="meta">تم بواسطة: ${r.handled_by}</div>` : ''}
+        </div>
+        <span class="badge ${r.status}">${r.status==='pending'?'⏳ معلق':r.status==='approved'?'✅ تم':'❌ مرفوض'}</span>
+      </div>
+      ${r.status === 'pending' && ROLE === 'super_admin' ? `
+        <div class="actions">
+          <button class="btn btn-ok" onclick="handle(${r.id}, 'approve')">✅ موافقة</button>
+          <button class="btn btn-no" onclick="handle(${r.id}, 'reject')">❌ رفض</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+async function handle(id, action) {
+  if (!confirm('متأكد؟')) return;
+  const res = await fetch('/api/admin/handle', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id, action})
+  });
+  const data = await res.json();
+  if (!data.ok) return alert(data.msg || 'خطأ');
+  loadRequests();
+}
+
+async function loadUsers() {
+  const res = await fetch('/api/admin/users');
+  const users = await res.json();
+  const box = document.getElementById('usersView');
+  if (!users.length) { box.innerHTML = '<div class="empty">مفيش مشتركين</div>'; return; }
+  box.innerHTML = users.map(u => `
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="phone">${u.phone}</div>
+          <div class="name">${u.name || '-'}</div>
+          <div class="meta">ينتهي: ${u.expiry} — فاضل ${u.days_left} يوم</div>
+        </div>
+        <span class="badge ${u.status==='active'?'active-b':'expired-b'}">${u.status==='active'?'✅ شغال':'❌ منتهي'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  if (tab === 'requests') {
+    document.getElementById('requestsView').classList.remove('hidden');
+    document.getElementById('usersView').classList.add('hidden');
+    loadRequests();
+  } else {
+    document.getElementById('requestsView').classList.add('hidden');
+    document.getElementById('usersView').classList.remove('hidden');
+    loadUsers();
+  }
+}
+
+loadRequests();
+setInterval(loadRequests, 30000);
+</script>
+</body>
+</html>
+ENDOFFILE

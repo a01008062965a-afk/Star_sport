@@ -1,0 +1,27 @@
+cat > templates/admin_login.html << 'ENDOFFILE'
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>دخول الأدمن</title>
+<style>
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#0f2027,#2c5364); font-family:Tahoma; }
+  .box { background:#fff; padding:30px; border-radius:16px; width:340px; box-shadow:0 10px 40px rgba(0,0,0,0.3); }
+  h2 { text-align:center; color:#0f2027; margin:0 0 20px; }
+  input { width:100%; padding:12px; margin-bottom:10px; border:2px solid #ddd; border-radius:8px; font-size:15px; box-sizing:border-box; }
+  input:focus { border-color:#2c5364; outline:none; }
+  button { width:100%; padding:12px; background:#2c5364; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; }
+  .error { color:#e53935; text-align:center; font-size:14px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+<form class="box" method="POST">
+  <h2>🔐 دخول الأدمن</h2>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
+  <input name="username" placeholder="اسم المستخدم" required>
+  <input name="password" type="password" placeholder="كلمة المرور" required>
+  <button>دخول</button>
+</form>
+</body>
+</html>
+ENDOFFILE
