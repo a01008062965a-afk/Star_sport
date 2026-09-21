@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القنوات المتاحة</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
+body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-height:100vh;color:#fff;padding:20px}
+h1{text-align:center;font-size:22px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.sub{text-align:center;color:#7a9bab;font-size:13px;margin-bottom:18px}
+.stats{text-align:center;color:#a0b8c4;font-size:12px;margin-bottom:14px}
+.stats span{margin:0 6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:500px;margin:0 auto}
+.ch{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:.2s}
+.ch.open{border-color:rgba(37,211,102,0.4);background:linear-gradient(135deg,rgba(37,211,102,0.1),rgba(37,211,102,0.02))}
+.ch.closed{border-color:rgba(229,57,53,0.4);background:linear-gradient(135deg,rgba(229,57,53,0.1),rgba(229,57,53,0.02))}
+.ch .icon{font-size:30px;margin-bottom:6px}
+.ch .name{font-size:13px;font-weight:bold;color:#fff;margin-bottom:6px}
+.ch .status{font-size:10px;font-weight:bold;padding:3px 10px;border-radius:12px;display:inline-block}
+.ch.open .status{background:#1b5e20;color:#a5d6a7}
+.ch.closed .status{background:#b71c1c;color:#ef9a9a}
+.ch .hint{font-size:10px;color:#ef9a9a;margin-top:6px;line-height:1.4}
+.back{display:block;text-align:center;color:#7a9bab;text-decoration:none;margin-top:24px;font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+.modal.hidden{display:none}
+.modal-box{background:#0f2027;border:2px solid #ffd200;border-radius:18px;padding:22px;max-width:400px;width:100%}
+.modal-box h3{color:#ffd200;font-size:17px;margin-bottom:14px;text-align:center}
+.modal-box label{display:block;font-size:12px;color:#a0b8c4;margin:10px 0 4px}
+.modal-box input,.modal-box textarea{width:100%;padding:11px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);color:#fff;border-radius:10px;font-size:14px;font-family:Tahoma}
+.modal-box textarea{min-height:90px;resize:vertical}
+.modal-box .btn{width:100%;padding:13px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:12px;font-size:15px;font-family:Tahoma}
+.modal-box .btn-send{background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027}
+.modal-box .btn-close{background:rgba(255,255,255,0.1);color:#fff;font-size:13px}
+.success{background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.4);color:#a5d6a7;padding:14px;border-radius:10px;text-align:center;font-weight:bold;margin-top:14px;font-size:14px}
+</style>
+</head>
+<body>
+
+<h1>📺 القنوات المتاحة</h1>
+<div class="sub">قنوات Star Sport</div>
+<div class="stats" id="stats">جاري التحميل...</div>
+<div class="grid" id="grid"></div>
+<a href="/" class="back">← رجوع للرئيسية</a>
+
+<div class="modal hidden" id="modal">
+<div class="modal-box">
+<h3 id="modalTitle">📺 الإبلاغ عن مشكلة</h3>
+<label>اسمك</label>
+<input type="text" id="m_name" placeholder="اسمك">
+<label>رقم الموبايل</label>
+<input type="tel" id="m_phone" placeholder="01xxxxxxxxx">
+<label>الرقم المشفر</label>
+<input type="text" id="m_card" placeholder="الرقم المشفر">
+<label>اكتب المشكلة</label>
+<textarea id="m_msg" placeholder="اكتب المشكلة بالتفصيل..."></textarea>
+<button class="btn btn-send" onclick="sendIssue()">📤 إرسال</button>
+<button class="btn btn-close" onclick="closeModal()">إلغاء</button>
+</div>
+</div>
+
+<script>
+var channels = [];
+var currentChannel = null;
+
+async function loadChannels() {
+    var r = await fetch('/api/channels');
+    channels = await r.json();
+    var open = channels.filter(function(c){ return !c.problem; }).length;
+    var closed = channels.length - open;
+    document.getElementById('stats').innerHTML =
+        '📺 إجمالي: <b>' + channels.length + '</b>' +
+        ' <span style="color:#a5d6a7">✅ ' + open + '</span>' +
+        ' <span style="color:#ef9a9a">❌ ' + closed + '</span>';
+    if (!channels.length) {
+        document.getElementById('grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#5a7a8a;padding:40px">مفيش قنوات متاحة</div>';
+        return;
+    }
+    document.getElementById('grid').innerHTML = channels.map(function(c) {
+        var isClosed = !!c.problem;
+        return '<div class="ch ' + (isClosed ? 'closed' : 'open') + '" onclick="openChannel(' + c.id + ')">' +
+            '<div class="icon">📺</div>' +
+            '<div class="name">' + c.name + '</div>' +
+            '<div class="status">' + (isClosed ? '❌ مقفلة' : '✅ شغالة') + '</div>' +
+            (isClosed ? '<div class="hint">اضغط للإبلاغ</div>' : '') +
+            '</div>';
+    }).join('');
+}
+
+function openChannel(id) {
+    currentChannel = channels.find(function(c){ return c.id === id; });
+    if (!currentChannel) return;
+    document.getElementById('modalTitle').textContent = '📺 ' + currentChannel.name;
+    document.getElementById('m_name').value = localStorage.getItem('user_name') || '';
+    document.getElementById('m_card').value = localStorage.getItem('user_card') || '';
+    document.getElementById('m_msg').value = '';
+    document.getElementById('m_phone').value = '';
+    document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+    currentChannel = null;
+}
+
+async function sendIssue() {
+    var msg = document.getElementById('m_msg').value.trim();
+    if (!msg) return alert('اكتب المشكلة');
+    if (!currentChannel) return;
+    var r = await fetch('/api/channel-issue', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            channel_id: currentChannel.id,
+            message: msg,
+            name: document.getElementById('m_name').value.trim(),
+            phone: document.getElementById('m_phone').value.trim(),
+            card_number: document.getElementById('m_card').value.trim()
+        })
+    });
+    var d = await r.json();
+    if (!d.ok) return alert(d.msg || 'خطأ');
+    document.querySelector('.modal-box').innerHTML = '<div class="success">✅ تم إرسال مشكلتك</div><button class="btn btn-close" onclick="closeModal();location.reload()" style="margin-top:16px">رجوع</button>';
+}
+
+loadChannels();
+</script>
+</body>
+</html>
