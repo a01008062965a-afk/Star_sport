@@ -10,7 +10,7 @@ body{background:linear-gradient(135deg,#0f2027,#2c5364);min-height:100vh;padding
 .card{background:#fff;color:#222;border-radius:16px;padding:22px;max-width:440px;margin:16px auto;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
 h2{font-size:18px;margin-bottom:14px;color:#0f2027}
 label{display:block;font-size:14px;margin:10px 0 4px;color:#444}
-input,select{width:100%;padding:12px;font-size:16px;border:2px solid #ddd;border-radius:10px;margin-bottom:8px}
+input[type=text],input[type=tel],select{width:100%;padding:12px;font-size:16px;border:2px solid #ddd;border-radius:10px;margin-bottom:8px}
 input:focus,select:focus{border-color:#2c5364;outline:none}
 button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px}
 .back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:12px;font-size:14px}
@@ -24,30 +24,31 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 .hidden{display:none}
 .success{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold}
 .note{background:#fff8e1;border-right:4px solid #ffb300;padding:12px;border-radius:8px;font-size:13px;line-height:1.7;margin:10px 0}
-.file-input{padding:10px;border:2px dashed #ccc;border-radius:10px;text-align:center;cursor:pointer;font-size:14px;background:#fafafa}
+.btn-row{display:flex;gap:8px;margin:8px 0}
+.btn-row button{flex:1;padding:12px;font-size:14px;background:#2c5364;color:#fff;border-radius:10px;border:none;cursor:pointer;font-weight:bold}
+.file-info{font-size:12px;color:#2e7d32;text-align:center;margin-top:6px;display:none}
 .copied{background:#c8e6c9 !important;color:#2e7d32 !important}
 </style>
 </head>
 <body>
 
-<!-- شاشة 1: الرقم المشفر -->
+<!-- شاشة 1 -->
 <div class="card" id="s1">
 <h2>💳 تجديد الاشتراك</h2>
 <label>🔒 الرقم الظاهر في القناة المشفرة</label>
-<input type="text" id="card1" placeholder="مثال: 1001" inputmode="numeric">
+<input type="text" id="card1" placeholder="اكتب الرقم كامل" autocomplete="off">
 <button onclick="checkCard()">دخول</button>
 <a href="/support" class="support">📞 نسيته؟ تواصل مع الدعم</a>
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
-<!-- شاشة 2: بيانات الاشتراك + اختيار المدة -->
+<!-- شاشة 2 -->
 <div class="card hidden" id="s2">
 <h2>بيانات اشتراكك</h2>
 <div id="st"></div>
 <div class="info-row"><span>الاسم:</span><b id="n">-</b></div>
 <div class="info-row"><span>ينتهي:</span><b id="e">-</b></div>
 <div class="info-row"><span>فاضل:</span><b id="d">-</b></div>
-
 <label>اختر مدة التجديد</label>
 <select id="months">
 <option value="1">شهر واحد</option>
@@ -58,27 +59,31 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
-<!-- شاشة 3: التحويل + السكرين -->
+<!-- شاشة 3 -->
 <div class="card hidden" id="s3">
 <h2>خطوات الدفع</h2>
-
 <div class="note">
 <b>1) حوّل على الرقم:</b>
 <div class="phone-box" id="vodafone" onclick="copyNum(this)">01006654853</div>
 <div style="text-align:center;font-size:12px;color:#666">فودافون كاش أو إنستاباي — اضغط للنسخ 📋</div>
 </div>
+<label>2) الرقم اللي حوّلت منه</label>
+<input type="tel" id="fromPhone" placeholder="01xxxxxxxxx" maxlength="15">
 
-<label>2) اكتب الرقم اللي حوّلت منه</label>
-<input type="tel" id="fromPhone" placeholder="01xxxxxxxxx" maxlength="11">
-
-<label>3) ارفع صورة التحويل (سكرين شوت)</label>
-<input type="file" id="screenshot" accept="image/*" capture="environment">
+<label>3) صورة التحويل</label>
+<div class="btn-row">
+<button onclick="document.getElementById('cam').click()">📷 الكاميرا</button>
+<button onclick="document.getElementById('gal').click()">🖼️ المعرض</button>
+</div>
+<input type="file" id="cam" accept="image/*" capture="environment" style="display:none" onchange="picked(this)">
+<input type="file" id="gal" accept="image/*" style="display:none" onchange="picked(this)">
+<div class="file-info" id="fname">✅ تم اختيار الصورة</div>
 
 <button onclick="sendReq()">📤 إرسال طلب التجديد</button>
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
-<!-- شاشة 4: النجاح -->
+<!-- شاشة 4 -->
 <div class="card hidden" id="s4">
 <div class="success">
 ✅ تم إرسال طلبك بنجاح<br>
@@ -89,7 +94,7 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 
 <script>
 let curCard = null;
-let curUser = null;
+let curFile = null;
 
 async function checkCard() {
     const c = document.getElementById('card1').value.trim();
@@ -103,7 +108,6 @@ async function checkCard() {
         const d = await r.json();
         if (!d.ok) return alert(d.msg);
         curCard = c;
-        curUser = d.user;
         document.getElementById('n').textContent = d.user.name || '-';
         document.getElementById('e').textContent = d.user.expiry;
         document.getElementById('d').textContent = d.user.days_left > 0 ? d.user.days_left + ' يوم' : 'خلص';
@@ -126,19 +130,25 @@ function copyNum(el) {
     setTimeout(() => el.classList.remove('copied'), 1000);
 }
 
+function picked(inp) {
+    if (inp.files && inp.files[0]) {
+        curFile = inp.files[0];
+        document.getElementById('fname').style.display = 'block';
+    }
+}
+
 async function sendReq() {
     const months = document.getElementById('months').value;
     const fromPhone = document.getElementById('fromPhone').value.trim();
-    const fileInput = document.getElementById('screenshot');
 
     if (!fromPhone) return alert('اكتب الرقم اللي حوّلت منه');
-    if (!fileInput.files[0]) return alert('ارفع صورة التحويل');
+    if (!curFile) return alert('ارفع صورة التحويل');
 
     const fd = new FormData();
     fd.append('card_number', curCard);
     fd.append('months', months);
     fd.append('from_phone', fromPhone);
-    fd.append('screenshot', fileInput.files[0]);
+    fd.append('screenshot', curFile);
 
     try {
         const r = await fetch('/api/renew', { method: 'POST', body: fd });
