@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تجديد الاشتراك</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
+body{background:linear-gradient(135deg,#0f2027,#2c5364);min-height:100vh;padding:20px;color:#fff}
+.card{background:#fff;color:#222;border-radius:16px;padding:22px;max-width:440px;margin:16px auto;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+h2{font-size:18px;margin-bottom:14px;color:#0f2027}
+label{display:block;font-size:14px;margin:10px 0 4px;color:#444}
+input,select{width:100%;padding:12px;font-size:16px;border:2px solid #ddd;border-radius:10px;margin-bottom:8px}
+input:focus,select:focus{border-color:#2c5364;outline:none}
+button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px}
+.back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:12px;font-size:14px}
+.info-row{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee;font-size:15px}
+.status{padding:10px;border-radius:10px;text-align:center;font-weight:bold;margin-bottom:12px}
+.active{background:#e8f5e9;color:#2e7d32}
+.expired{background:#ffebee;color:#c62828}
+.hidden{display:none}
+.success{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="card" id="s1">
+<h2>💳 تجديد الاشتراك</h2>
+<label>رقم الموبايل</label>
+<input type="tel" id="phone" placeholder="01xxxxxxxxx" maxlength="11">
+<button onclick="check()">دخول</button>
+<a href="/" class="back">← رجوع للرئيسية</a>
+</div>
+
+<div class="card hidden" id="s2">
+<h2>بيانات اشتراكك</h2>
+<div id="st"></div>
+<div class="info-row"><span>الاسم:</span><b id="n">-</b></div>
+<div class="info-row"><span>ينتهي:</span><b id="e">-</b></div>
+<div class="info-row"><span>فاضل:</span><b id="d">-</b></div>
+<label>مدة التجديد</label>
+<select id="months"><option value="1">شهر واحد</option><option value="2">شهرين</option><option value="3">3 شهور</option></select>
+<button onclick="send()">📤 إرسال طلب التجديد</button>
+<a href="/" class="back">← رجوع للرئيسية</a>
+</div>
+
+<div class="card hidden" id="s3">
+<div class="success">✅ تم إرسال طلبك<br><span style="font-size:13px;font-weight:normal">هيتم التواصل معاك قريباً</span></div>
+<a href="/" class="back">← رجوع للرئيسية</a>
+</div>
+
+<script>
+let ph=null;
+async function check(){
+const p=document.getElementById('phone').value.trim();
+if(!p)return alert('ادخل الرقم');
+try{const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:p})});
+const d=await r.json();
+if(!d.ok)return alert(d.msg);
+ph=p;const u=d.user;
+document.getElementById('n').textContent=u.name||'-';
+document.getElementById('e').textContent=u.expiry;
+document.getElementById('d').textContent=u.days_left>0?u.days_left+' يوم':'خلص';
+const st=document.getElementById('st');
+st.className='status '+(u.status==='active'?'active':'expired');
+st.textContent=u.status==='active'?'✅ اشتراكك شغال':'❌ الاشتراك خلص';
+document.getElementById('s1').classList.add('hidden');
+document.getElementById('s2').classList.remove('hidden');
+}catch(e){alert('خطأ')}
+}
+async function send(){
+const m=document.getElementById('months').value;
+try{const r=await fetch('/api/renew',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:ph,months:m})});
+const d=await r.json();
+if(!d.ok)return alert(d.msg);
+document.getElementById('s2').classList.add('hidden');
+document.getElementById('s3').classList.remove('hidden');
+}catch(e){alert('خطأ')}
+}
+</script>
+</body>
+</html>
