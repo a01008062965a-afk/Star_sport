@@ -182,7 +182,7 @@ def api_check_card():
     card = d.get('card_number', '').strip()
     u = User.query.filter_by(card_number=card).first()
     if not u:
-        return jsonify({'ok': False, 'msg': 'الرقم غير مسجل'}), 404
+        return jsonify({'ok': True, 'user': {'phone':'','card_number':card,'name':'','expiry':'-','days_left':0,'status':'new'}})
     return jsonify({'ok': True, 'user': u.to_dict()})
 
 
