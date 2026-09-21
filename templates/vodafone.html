@@ -10,6 +10,7 @@ body{background:linear-gradient(135deg,#0f2027,#2c5364);min-height:100vh;padding
 .card{background:#fff;color:#222;border-radius:16px;padding:30px;max-width:440px;width:100%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
 .icon{font-size:60px;margin-bottom:12px}
 h2{color:#0f2027;margin-bottom:8px}
+.sub{color:#666;font-size:14px}
 .num{font-size:26px;font-weight:bold;color:#c62828;direction:ltr;letter-spacing:2px;background:#ffebee;padding:16px;border-radius:12px;margin:16px 0;cursor:pointer}
 .note{color:#666;font-size:14px;line-height:1.8;margin-top:10px}
 .back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:18px;font-size:14px}
@@ -19,8 +20,8 @@ h2{color:#0f2027;margin-bottom:8px}
 <div class="card">
 <div class="icon">💰</div>
 <h2>رقم فودافون كاش</h2>
-<p style="color:#666;margin-top:8px">حوّل عليه مبلغ التجديد</p>
-<div class="num" onclick="copy(this)">{{ number }}</div>
+<div class="sub">حوّل عليه مبلغ التجديد</div>
+<div class="num" onclick="copyNum(this)">{{ vodafone }}</div>
 <div class="note">
 📌 فودافون كاش أو إنستاباي<br>
 📌 بعد التحويل، ابعت صورة على الدعم الفني
@@ -28,9 +29,12 @@ h2{color:#0f2027;margin-bottom:8px}
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 <script>
-function copy(el){
-navigator.clipboard.writeText(el.textContent.trim());
-const t=el.textContent;el.textContent='✅ تم النسخ';setTimeout(()=>el.textContent=t,1200);
+function copyNum(el) {
+    navigator.clipboard.writeText(el.textContent.trim());
+    var t = el.textContent;
+    el.textContent = '✅ تم النسخ';
+    el.style.fontSize = '20px';
+    setTimeout(function(){ el.textContent = t; el.style.fontSize = '26px'; }, 1000);
 }
 </script>
 </body>
