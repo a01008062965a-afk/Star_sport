@@ -13,42 +13,45 @@ label{display:block;font-size:14px;margin:10px 0 4px;color:#444}
 input,textarea{width:100%;padding:12px;font-size:15px;border:2px solid #ddd;border-radius:10px;margin-bottom:8px;font-family:Tahoma}
 textarea{min-height:120px;resize:vertical}
 input:focus,textarea:focus{border-color:#2c5364;outline:none}
-button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px}
+button{width:100%;padding:14px;font-size:16px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px;font-family:Tahoma}
 .back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:12px;font-size:14px}
 .success{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold}
 .hidden{display:none}
+.call-box{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold;margin-bottom:14px}
 </style>
 </head>
 <body>
+
 <div class="card" id="s1">
 <h2>🛠️ الدعم الفني</h2>
-<label>رقم الموبايل</label>
-<input type="tel" id="phone" placeholder="01xxxxxxxxx" maxlength="11">
-<label>الاسم (اختياري)</label>
-<input type="text" id="name" placeholder="اسمك">
-<label>رسالتك</label>
-<textarea id="msg" placeholder="اكتب مشكلتك أو استفسارك..."></textarea>
-<button onclick="send()">📤 إرسال الرسالة</button>
+<div class="call-box">
+📞 للتواصل المباشر:<br>
+<a href="https://wa.me/201003658928" style="color:#2e7d32;text-decoration:none;font-weight:bold;direction:ltr;display:inline-block;margin-top:6px">01003658928</a>
+</div>
+<label>او اكتب رسالتك هنا</label>
+<input type="text" id="phone" placeholder="رقم الموبايل">
+<input type="text" id="name" placeholder="الاسم (اختياري)">
+<textarea id="msg" placeholder="اكتب مشكلتك..."></textarea>
+<button onclick="send()">📤 إرسال</button>
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
 <div class="card hidden" id="s2">
 <div class="success">✅ تم إرسال رسالتك<br><span style="font-size:13px;font-weight:normal">هيتم التواصل معاك قريباً</span></div>
-<a href="/" class="back">← رجوع للرئيسية</a>
+<a href="/" class="back" style="margin-top:14px">← رجوع للرئيسية</a>
 </div>
 
 <script>
-async function send(){
-const p=document.getElementById('phone').value.trim();
-const n=document.getElementById('name').value.trim();
-const m=document.getElementById('msg').value.trim();
-if(!p||!m)return alert('اكمل البيانات');
-try{const r=await fetch('/api/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:p,name:n,message:m})});
-const d=await r.json();
-if(!d.ok)return alert(d.msg);
-document.getElementById('s1').classList.add('hidden');
-document.getElementById('s2').classList.remove('hidden');
-}catch(e){alert('خطأ')}
+async function send() {
+    var p = document.getElementById('phone').value.trim();
+    var m = document.getElementById('msg').value.trim();
+    if (!p || !m) return alert('اكمل البيانات');
+    await fetch('/api/support', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({phone: p, name: document.getElementById('name').value.trim(), message: m})
+    });
+    document.getElementById('s1').classList.add('hidden');
+    document.getElementById('s2').classList.remove('hidden');
 }
 </script>
 </body>
