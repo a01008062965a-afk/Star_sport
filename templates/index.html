@@ -1,135 +1,42 @@
-cat > templates/admin.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الأدمن — استار سبورت</title>
+<title>Star Sport Services</title>
 <style>
-  * { box-sizing:border-box; font-family:'Tahoma', sans-serif; }
-  body { margin:0; background:#f4f6f9; color:#222; }
-  header { background:linear-gradient(90deg,#0f2027,#2c5364); color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; }
-  header h1 { margin:0; font-size:20px; }
-  header .info { font-size:13px; color:#ffd200; }
-  header a { color:#fff; text-decoration:none; font-size:14px; }
-  .container { padding:20px; max-width:900px; margin:0 auto; }
-  .tabs { display:flex; gap:8px; margin-bottom:16px; }
-  .tab { padding:10px 20px; background:#fff; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px; border:2px solid transparent; }
-  .tab.active { border-color:#2c5364; color:#2c5364; }
-  .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .row { display:flex; justify-content:space-between; align-items:center; }
-  .phone { font-size:17px; font-weight:bold; color:#0f2027; direction:ltr; }
-  .name { color:#666; font-size:14px; margin-top:4px; }
-  .meta { font-size:13px; color:#888; margin-top:6px; }
-  .badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; }
-  .pending { background:#fff3e0; color:#ef6c00; }
-  .approved { background:#e8f5e9; color:#2e7d32; }
-  .rejected { background:#ffebee; color:#c62828; }
-  .active-b { background:#e8f5e9; color:#2e7d32; }
-  .expired-b { background:#ffebee; color:#c62828; }
-  .actions { display:flex; gap:8px; margin-top:10px; }
-  .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px; }
-  .btn-ok { background:#25D366; color:#fff; }
-  .btn-no { background:#e53935; color:#fff; }
-  .empty { text-align:center; color:#999; padding:40px; }
-  .hidden { display:none; }
+*{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0;padding:0}
+body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);min-height:100vh;padding:20px;color:#fff;display:flex;align-items:center;justify-content:center}
+.card{background:#1a1a1a;border:2px solid #ffd200;border-radius:18px;padding:24px 18px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(255,210,0,0.2)}
+.title{text-align:center;font-size:22px;font-weight:bold;color:#ffd200;margin-bottom:6px}
+.divider{text-align:center;color:#ffd200;margin:14px 0;letter-spacing:1px;opacity:0.5;font-size:13px}
+.list{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.btn{background:#fff;color:#0f2027;border-radius:12px;padding:16px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;font-weight:bold;font-size:16px;transition:all .15s;box-shadow:0 4px 12px rgba(0,0,0,0.25);border:2px solid transparent}
+.btn:active{transform:scale(.97);background:#ffd200}
+.btn .icon{font-size:26px;flex-shrink:0}
+.btn .label{flex:1;text-align:right}
+.btn .arrow{color:#888;font-size:18px}
+.footer{text-align:center;color:#ffd200;font-size:13px;margin-top:14px}
+.footer .small{color:#888;font-size:11px;margin-top:6px}
 </style>
 </head>
 <body>
-
-<header>
-  <div>
-    <h1>🏆 لوحة تحكم استار سبورت</h1>
-    <div class="info">أهلاً {{ admin_name }} — {{ admin_role }}</div>
-  </div>
-  <a href="/admin/logout">خروج</a>
-</header>
-
-<div class="container">
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('requests', this)">📥 طلبات التجديد</div>
-    <div class="tab" onclick="switchTab('users', this)">👥 المشتركين</div>
-  </div>
-  <div id="requestsView"></div>
-  <div id="usersView" class="hidden"></div>
+<div class="card">
+<div class="title">👑 Star Sport Services ⭐</div>
+<div class="divider">═════════════════════</div>
+<div class="list">
+<a href="/renew" class="btn"><span class="icon">💳</span><span class="label">تجديد الاشتراك</span><span class="arrow">‹</span></a>
+<a href="/vodafone" class="btn"><span class="icon">💰</span><span class="label">رقم فودافون كاش</span><span class="arrow">‹</span></a>
+<a href="/remaining" class="btn"><span class="icon">⏳</span><span class="label">المتبقي في الاشتراك</span><span class="arrow">‹</span></a>
+<a href="/matches" class="btn"><span class="icon">⚽</span><span class="label">مباريات اليوم</span><span class="arrow">‹</span></a>
+<a href="/azkar" class="btn"><span class="icon">📿</span><span class="label">أذكار اليوم</span><span class="arrow">‹</span></a>
+<a href="/quran" class="btn"><span class="icon">📖</span><span class="label">آية قرآنية</span><span class="arrow">‹</span></a>
+<a href="/prayer" class="btn"><span class="icon">🕋</span><span class="label">مواقيت الصلاة</span><span class="arrow">‹</span></a>
+<a href="/support" class="btn"><span class="icon">🛠️</span><span class="label">الدعم الفني</span><span class="arrow">‹</span></a>
 </div>
-
-<script>
-const ROLE = "{{ admin_role }}";
-
-async function loadRequests() {
-  const res = await fetch('/api/admin/requests');
-  const reqs = await res.json();
-  const box = document.getElementById('requestsView');
-  if (!reqs.length) { box.innerHTML = '<div class="empty">مفيش طلبات حالياً</div>'; return; }
-  box.innerHTML = reqs.map(r => `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="phone">${r.phone}</div>
-          <div class="name">${r.name || '-'}</div>
-          <div class="meta">المدة: ${r.months} شهر — ${r.created_at}</div>
-          ${r.handled_by ? `<div class="meta">تم بواسطة: ${r.handled_by}</div>` : ''}
-        </div>
-        <span class="badge ${r.status}">${r.status==='pending'?'⏳ معلق':r.status==='approved'?'✅ تم':'❌ مرفوض'}</span>
-      </div>
-      ${r.status === 'pending' && ROLE === 'super_admin' ? `
-        <div class="actions">
-          <button class="btn btn-ok" onclick="handle(${r.id}, 'approve')">✅ موافقة</button>
-          <button class="btn btn-no" onclick="handle(${r.id}, 'reject')">❌ رفض</button>
-        </div>` : ''}
-    </div>
-  `).join('');
-}
-
-async function handle(id, action) {
-  if (!confirm('متأكد؟')) return;
-  const res = await fetch('/api/admin/handle', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({id, action})
-  });
-  const data = await res.json();
-  if (!data.ok) return alert(data.msg || 'خطأ');
-  loadReuests();
-}
-
-async function loadUsers() {
-  const res = await fetch('/api/admin/users');
-  const users = await res.json();
-  const box = document.getElementById('usersView');
-  if (!users.length) { box.innerHTML = '<div class="empty">مفيش مشتركين</div>'; return; }
-  box.innerHTML = users.map(u => `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="phone">${u.phone}</div>
-          <div class="name">${u.name || '-'}</div>
-          <div class="meta">ينتهي: ${u.expiry} — فاضل ${u.days_left} يوم</div>
-        </div>
-        <span class="badge ${u.status==='active'?'active-b':'expired-b'}">${u.status==='active'?'✅ شغال':'❌ منتهي'}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  if (tab === 'requests') {
-    document.getElementById('requestsView').classList.remove('hidden');
-    document.getElementById('usersView').classList.add('hidden');
-    loadRequests();
-  } else {
-    document.getElementById('requestsView').classList.add('hidden');
-    document.getElementById('usersView').classList.remove('hidden');
-    loadUsers();
-  }
-}
-
-loadRequests();
-setInterval(loadRequests, 30000);
-</script>
+<div class="divider">═════════════════════</div>
+<div class="footer">💬 اضغط على الخدمة المطلوبة</div>
+<div class="footer small">© Star Sport Services 2026</div>
+</div>
 </body>
 </html>
-ENDOFFILE
