@@ -21,7 +21,7 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 
 .tagline{color:#7a9bab;font-size:13px;margin-bottom:30px}
 
-.box{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(255,210,0,0.2);border-radius:20px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+.box{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(255,210,0,0.2);border-radius:20px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.3);position:relative;z-index:1}
 
 .welcome-title{font-size:20px;color:#ffd200;margin-bottom:6px;font-weight:bold}
 .welcome-sub{font-size:13px;color:#a0b8c4;margin-bottom:20px}
@@ -41,29 +41,39 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 .services{padding:24px 20px;max-width:440px;margin:0 auto;min-height:100vh;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.user-bar{background:linear-gradient(135deg,rgba(255,210,0,0.15),rgba(255,210,0,0.05));border:1px solid rgba(255,210,0,0.3);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center}
-.user-bar .hi{font-size:14px;color:#a0b8c4;margin-bottom:4px}
+.user-bar{background:linear-gradient(135deg,rgba(255,210,0,0.15),rgba(255,210,0,0.05));border:1px solid rgba(255,210,0,0.3);border-radius:16px;padding:16px;margin-bottom:16px;text-align:center}
+.user-bar .hi{font-size:13px;color:#a0b8c4;margin-bottom:4px}
 .user-bar .name{font-size:20px;color:#ffd200;font-weight:bold;margin-bottom:4px}
 .user-bar .card-num{font-size:12px;color:#7a9bab;direction:ltr}
-
 .user-bar .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-top:8px}
 .badge-active{background:#1b5e20;color:#a5d6a7}
 .badge-expired{background:#b71c1c;color:#ef9a9a}
 
-.services-title{text-align:center;font-size:15px;color:#a0b8c4;margin-bottom:16px}
+.search-bar{display:flex;gap:6px;margin-bottom:16px}
+.search-bar input{flex:1;padding:12px 14px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:14px;font-family:Tahoma}
+.search-bar input:focus{border-color:#ffd200;outline:none}
+.search-bar input::placeholder{color:#5a7a8a}
+.search-bar button{padding:0 18px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027;border:none;border-radius:12px;font-weight:bold;cursor:pointer;font-family:Tahoma}
 
-.grid{display:flex;flex-direction:column;gap:12px}
+.results{margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.result-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,210,0,0.3);border-radius:12px;padding:12px;cursor:pointer;transition:.2s}
+.result-card:active{background:rgba(255,210,0,0.15)}
+.result-card .r-name{color:#ffd200;font-weight:bold;font-size:15px;margin-bottom:4px}
+.result-card .r-info{font-size:12px;color:#a0b8c4;direction:ltr}
 
-.tile{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px;text-decoration:none;display:flex;align-items:center;gap:16px;color:#fff;transition:.2s;backdrop-filter:blur(5px)}
+.services-title{text-align:center;font-size:14px;color:#a0b8c4;margin-bottom:12px}
+
+.grid{display:flex;flex-direction:column;gap:10px}
+
+.tile{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;color:#fff;transition:.2s}
 .tile:active{transform:scale(.98);background:rgba(255,210,0,0.12);border-color:rgba(255,210,0,0.4)}
-.tile .icon{font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,210,0,0.2),rgba(255,210,0,0.05));border-radius:12px;flex-shrink:0}
+.tile .icon{font-size:26px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,210,0,0.2),rgba(255,210,0,0.05));border-radius:12px;flex-shrink:0}
 .tile .text{flex:1;text-align:right}
-.tile .text .t{font-size:16px;font-weight:bold;color:#fff;margin-bottom:2px}
-.tile .text .s{font-size:12px;color:#7a9bab}
+.tile .text .t{font-size:15px;font-weight:bold;color:#fff;margin-bottom:2px}
+.tile .text .s{font-size:11px;color:#7a9bab}
 .tile .arrow{color:#ffd200;font-size:20px;opacity:0.7}
 
 .tile.primary{background:linear-gradient(135deg,rgba(247,151,30,0.25),rgba(255,210,0,0.15));border-color:rgba(255,210,0,0.5)}
-.tile.primary .text .t{color:#ffd200}
 
 .footer{text-align:center;color:#5a7a8a;font-size:12px;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05)}
 .footer a{color:#7a9bab;text-decoration:none;font-size:11px;margin:0 8px}
@@ -73,7 +83,7 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 </head>
 <body>
 
-<!-- الشاشة الأولى: الترحيب -->
+<!-- الشاشة الأولى -->
 <div class="hero" id="hero">
 <div class="logo">👑</div>
 <div class="brand">Star Sport Services</div>
@@ -98,7 +108,7 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 </div>
 </div>
 
-<!-- الشاشة الثانية: الخدمات -->
+<!-- الشاشة الثانية -->
 <div class="services hidden" id="services">
 <div class="user-bar">
 <div class="hi">👋 أهلاً وسهلاً بك</div>
@@ -106,6 +116,12 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 <div class="card-num" id="userCard">-</div>
 <div id="userStatus"></div>
 </div>
+
+<div class="search-bar">
+<input type="text" id="searchQ" placeholder="🔍 ابحث بالاسم / الموبايل / الرقم المشفر">
+<button onclick="doSearch()">ابحث</button>
+</div>
+<div class="results hidden" id="results"></div>
 
 <div class="services-title">اختر الخدمة المطلوبة</div>
 <div class="grid">
@@ -122,6 +138,11 @@ body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-
 <a href="/remaining" class="tile">
 <span class="icon">⏳</span>
 <span class="text"><span class="t">المتبقي في الاشتراك</span><span class="s">اعرف فاضل كام يوم</span></span>
+<span class="arrow">‹</span>
+</a>
+<a href="/channels" class="tile">
+<span class="icon">📺</span>
+<span class="text"><span class="t">القنوات المتاحة</span><span class="s">اعرف القنوات والأسعار</span></span>
 <span class="arrow">‹</span>
 </a>
 <a href="/matches" class="tile">
@@ -147,24 +168,16 @@ Star Sport Services © 2026
 function start() {
     var name = document.getElementById('inName').value.trim();
     var card = document.getElementById('inCard').value.trim();
-
     if (!name) { alert('اكتب اسمك'); return; }
     if (!card) { alert('اكتب الرقم المشفر'); return; }
-
-    // نحفظ في localStorage
     localStorage.setItem('user_name', name);
     localStorage.setItem('user_card', card);
-
-    // نسجل في الداتابيز
     fetch('/api/register', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({name: name, card_number: card})
-    }).then(function() {
-        showServices(name, card);
-    }).catch(function() {
-        showServices(name, card);
-    });
+    }).then(function() { showServices(name, card); })
+      .catch(function() { showServices(name, card); });
 }
 
 function showServices(name, card) {
@@ -172,8 +185,6 @@ function showServices(name, card) {
     document.getElementById('services').classList.remove('hidden');
     document.getElementById('userName').textContent = name;
     document.getElementById('userCard').textContent = card;
-
-    // نجيب حالة الاشتراك
     fetch('/api/check-card', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -192,6 +203,46 @@ function showServices(name, card) {
     }).catch(function(){});
 }
 
+async function doSearch() {
+    var q = document.getElementById('searchQ').value.trim();
+    if (!q) return;
+    var r = await fetch('/api/search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({q: q})
+    });
+    var d = await r.json();
+    var box = document.getElementById('results');
+    box.classList.remove('hidden');
+    if (!d.ok || !d.results || !d.results.length) {
+        box.innerHTML = '<div class="result-card"><div class="r-name">❌ مفيش نتائج</div></div>';
+        return;
+    }
+    if (d.results.length === 1) {
+        var u = d.results[0];
+        localStorage.setItem('user_name', u.name);
+        localStorage.setItem('user_card', u.card_number);
+        showServices(u.name, u.card_number);
+        document.getElementById('searchQ').value = '';
+        box.classList.add('hidden');
+        return;
+    }
+    box.innerHTML = d.results.map(function(u) {
+        return '<div class="result-card" onclick="pick(\'' + u.card_number.replace(/'/g,"\\'") + '\',\'' + (u.name||'').replace(/'/g,"\\'") + '\')">' +
+            '<div class="r-name">' + u.name + '</div>' +
+            '<div class="r-info">' + u.card_number + ' — فاضل ' + u.days_left + ' يوم</div>' +
+            '</div>';
+    }).join('');
+}
+
+function pick(card, name) {
+    localStorage.setItem('user_name', name);
+    localStorage.setItem('user_card', card);
+    showServices(name, card);
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('searchQ').value = '';
+}
+
 function changeUser() {
     localStorage.removeItem('user_name');
     localStorage.removeItem('user_card');
@@ -201,13 +252,10 @@ function changeUser() {
     document.getElementById('inCard').value = '';
 }
 
-// لو مستخدم مسجل قبل كده
 window.onload = function() {
     var name = localStorage.getItem('user_name');
     var card = localStorage.getItem('user_card');
-    if (name && card) {
-        showServices(name, card);
-    }
+    if (name && card) showServices(name, card);
 };
 </script>
 </body>
