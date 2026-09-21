@@ -29,16 +29,27 @@ button{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;curso
 </div>
 </div>
 <a href="/" class="back">← رجوع للرئيسية</a>
+
 <script>
-let cur='';
-function load(){
-fetch('/api/quran').then(r=>r.json()).then(d=>{
-document.getElementById('s').textContent='سورة '+d.surah+' — الآية '+d.ayah;
-document.getElementById('t').textContent=d.text;
-cur=d.text+' (سورة '+d.surah+')';
-});
+var cur = '';
+function load() {
+  fetch('/api/quran')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      document.getElementById('s').textContent = 'سورة ' + d.surah + ' — الآية ' + d.ayah;
+      document.getElementById('t').textContent = d.text;
+      cur = d.text + ' (سورة ' + d.surah + ')';
+    })
+    .catch(function(e) {
+      document.getElementById('s').textContent = 'خطأ';
+    });
 }
-function cp(){navigator.clipboard.writeText(cur);alert('تم النسخ ✅');}
+function cp() {
+  if (cur) {
+    navigator.clipboard.writeText(cur);
+    alert('تم النسخ');
+  }
+}
 load();
 </script>
 </body>
