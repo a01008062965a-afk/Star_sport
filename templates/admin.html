@@ -12,8 +12,9 @@ header h1{margin:0;font-size:17px}
 header .info{font-size:11px;color:#ffd200;margin-top:3px}
 header .logout{color:#fff;text-decoration:none;font-size:12px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
 .tabs{display:flex;gap:4px;padding:10px;overflow-x:auto;background:#0f2027}
-.tab{padding:8px 14px;background:rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;font-size:12px;font-weight:bold;white-space:nowrap;border:2px solid transparent;color:#a0b8c4;transition:.2s}
+.tab{padding:8px 14px;background:rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;font-size:12px;font-weight:bold;white-space:nowrap;border:2px solid transparent;color:#a0b8c4;transition:.2s;position:relative}
 .tab.active{background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027;border-color:#f7971e}
+.tab .dot{position:absolute;top:-4px;right:-4px;background:#e53935;color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:bold}
 .container{padding:14px;max-width:820px;margin:0 auto}
 .card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:12px}
 .label{color:#7a9bab;font-size:11px}
@@ -26,6 +27,8 @@ header .logout{color:#fff;text-decoration:none;font-size:12px;background:rgba(25
 .rejected{background:#b71c1c;color:#ef9a9a}
 .active-b{background:#1b5e20;color:#a5d6a7}
 .expired-b{background:#b71c1c;color:#ef9a9a}
+.open-b{background:#1b5e20;color:#a5d6a7}
+.closed-b{background:#b71c1c;color:#ef9a9a}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;font-family:Tahoma}
 .btn-ok{background:#25D366;color:#fff}
@@ -42,8 +45,8 @@ header .logout{color:#fff;text-decoration:none;font-size:12px;background:rgba(25
 .money input:focus{border-color:#ffd200;outline:none}
 .empty{text-align:center;color:#5a7a8a;padding:40px;font-size:13px}
 .hidden{display:none}
-input[type=text],input[type=tel],input[type=date],input[type=number],textarea{width:100%;padding:11px;border:2px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#fff;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
-input:focus,textarea:focus{border-color:#ffd200;outline:none}
+input[type=text],input[type=tel],input[type=date],input[type=number],textarea,select{width:100%;padding:11px;border:2px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#fff;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
+input:focus,textarea:focus,select:focus{border-color:#ffd200;outline:none}
 textarea{min-height:70px;resize:vertical}
 .add-form{background:rgba(255,255,255,0.03);border:2px dashed rgba(255,210,0,0.3);border-radius:12px;padding:16px;margin-bottom:16px}
 .add-form h3{margin-bottom:12px;color:#ffd200;font-size:14px}
@@ -52,7 +55,23 @@ textarea{min-height:70px;resize:vertical}
 .stat{background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;text-align:center}
 .stat .num{font-size:26px;font-weight:bold;color:#ffd200;margin-bottom:4px}
 .stat .lbl{font-size:11px;color:#7a9bab}
-.channel-icon{font-size:32px;margin-left:8px}
+.ch-icon{font-size:26px;margin-left:6px}
+.ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ch-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;text-align:center}
+.ch-card.open{border-color:rgba(37,211,102,0.4);background:rgba(37,211,102,0.08)}
+.ch-card.closed{border-color:rgba(229,57,53,0.4);background:rgba(229,57,53,0.08)}
+.ch-card .name{font-size:14px;font-weight:bold;color:#fff;margin:6px 0}
+.ch-card .status{font-size:11px;font-weight:bold;padding:3px 8px;border-radius:12px;display:inline-block}
+.ch-card .status.open-b{background:#1b5e20;color:#a5d6a7}
+.ch-card .status.closed-b{background:#b71c1c;color:#ef9a9a}
+.ch-card .btns{display:flex;gap:4px;margin-top:8px;justify-content:center}
+.ch-card .btns button{font-size:11px;padding:5px 10px}
+.issue-card{background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.3);border-radius:12px;padding:14px;margin-bottom:10px}
+.issue-card .ch{color:#ffd200;font-weight:bold;font-size:15px;margin-bottom:6px}
+.issue-card .msg{background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;font-size:14px;line-height:1.7;margin:8px 0}
+.bulk{background:linear-gradient(135deg,rgba(247,151,30,0.2),rgba(255,210,0,0.1));border:2px solid rgba(255,210,0,0.4);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center}
+.bulk h3{color:#ffd200;font-size:15px;margin-bottom:8px}
+.bulk p{color:#a0b8c4;font-size:12px;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -69,6 +88,7 @@ textarea{min-height:70px;resize:vertical}
 <div class="tab active" onclick="tab('requests',this)">📥 الطلبات</div>
 <div class="tab" onclick="tab('users',this)">👥 المشتركين</div>
 <div class="tab" onclick="tab('channels',this)">📺 القنوات</div>
+<div class="tab" onclick="tab('issues',this)" id="issuesTab">⚠️ المشاكل</div>
 <div class="tab" onclick="tab('messages',this)">📩 الدعم</div>
 <div class="tab" onclick="tab('matches',this)">⚽ المباريات</div>
 <div class="tab" onclick="tab('stats',this)">📊 إحصائيات</div>
@@ -78,6 +98,7 @@ textarea{min-height:70px;resize:vertical}
 <div id="requestsView"></div>
 <div id="usersView" class="hidden"></div>
 <div id="channelsView" class="hidden"></div>
+<div id="issuesView" class="hidden"></div>
 <div id="messagesView" class="hidden"></div>
 <div id="matchesView" class="hidden"></div>
 <div id="statsView" class="hidden"></div>
@@ -162,7 +183,7 @@ async function loadUsers() {
             '<span class="badge ' + stc + '">' + st + '</span>' +
             '</div>' +
             '<div class="actions">' +
-            '<button class="btn btn-blue btn-sm" onclick="editUser(\'' + u.card_number + '\',\'' + (u.name || '') + '\',\'' + (u.phone || '') + '\',\'' + u.expiry + '\')">✏️ تعديل</button>' +
+            '<button class="btn btn-blue btn-sm" onclick="editUser(\'' + u.card_number + '\',\'' + (u.name || '').replace(/'/g,"\\'") + '\',\'' + (u.phone || '') + '\',\'' + u.expiry + '\')">✏️ تعديل</button>' +
             '<button class="btn btn-no btn-sm" onclick="delUser(\'' + u.card_number + '\')">🗑️ حذف</button>' +
             '</div></div>';
     }).join('');
@@ -211,36 +232,43 @@ async function loadChannels() {
     const r = await fetch('/api/admin/channels');
     const d = await r.json();
     const b = document.getElementById('channelsView');
-    var form = '<div class="add-form"><h3>➕ إضافة قناة</h3>' +
-        '<input type="text" id="ch_icon" placeholder="رمز (مثال: 📺 أو ⚽)" value="📺">' +
+    var bulk = '<div class="bulk"><h3>⚡ إضافة 50 قناة تلقائياً</h3><p>Star Sport 1 → 50 مرة واحدة</p><button class="btn btn-gold" onclick="addBulk()">إضافة 50 قناة</button></div>';
+    var form = '<div class="add-form"><h3>➕ إضافة قناة يدوياً</h3>' +
         '<input type="text" id="ch_name" placeholder="اسم القناة">' +
         '<input type="number" id="ch_price" placeholder="السعر (اختياري)">' +
-        '<textarea id="ch_problem" placeholder="المشاكل / الملاحظات (اختياري)"></textarea>' +
         '<button class="btn btn-gold" onclick="addChannel()" style="width:100%">إضافة القناة</button></div>';
-    if (!d.length) { b.innerHTML = form + '<div class="empty">مفيش قنوات</div>'; return; }
-    var list = d.map(function(c) {
-        return '<div class="card">' +
-            '<div class="row">' +
-            '<div style="flex:1">' +
-            '<div class="phone"><span class="channel-icon">' + (c.icon || '📺') + '</span> ' + c.name + '</div>' +
-            (c.price ? '<div><span class="label">السعر:</span> <b>' + c.price + ' جنيه</b></div>' : '') +
-            (c.problem ? '<div style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:13px;color:#a0b8c4">' + c.problem + '</div>' : '') +
-            '</div>' +
-            '</div>' +
-            '<div class="actions">' +
-            '<button class="btn btn-blue btn-sm" onclick="editChannel(' + c.id + ',\'' + (c.icon || '📺') + '\',\'' + c.name.replace(/'/g,"\\'") + '\',' + c.price + ',\'' + (c.problem || '').replace(/'/g,"\\'").replace(/\n/g,' ') + '\')">✏️ تعديل</button>' +
-            '<button class="btn btn-no btn-sm" onclick="delChannel(' + c.id + ')">🗑️ حذف</button>' +
+    if (!d.length) {
+        b.innerHTML = bulk + form + '<div class="empty">مفيش قنوات</div>';
+        return;
+    }
+    var grid = '<div class="ch-grid">' + d.map(function(c) {
+        var cls = c.problem ? 'closed' : 'open';
+        var stTxt = c.problem ? '❌ مقفلة' : '✅ شغالة';
+        return '<div class="ch-card ' + cls + '">' +
+            '<div class="ch-icon">' + (c.icon || '📺') + '</div>' +
+            '<div class="name">' + c.name + '</div>' +
+            '<div class="status ' + (c.problem ? 'closed-b' : 'open-b') + '">' + stTxt + '</div>' +
+            '<div class="btns">' +
+            '<button class="btn btn-blue btn-sm" onclick="toggleChannel(' + c.id + ')">' + (c.problem ? '✅ شغّل' : '❌ اقفل') + '</button>' +
+            '<button class="btn btn-no btn-sm" onclick="delChannel(' + c.id + ')">🗑️</button>' +
             '</div></div>';
-    }).join('');
-    b.innerHTML = form + list;
+    }).join('') + '</div>';
+    b.innerHTML = bulk + form + grid;
+}
+
+async function addBulk() {
+    if (!confirm('إضافة 50 قناة (Star Sport 1 → 50)؟')) return;
+    var r = await fetch('/api/admin/add_bulk_channels', {method: 'POST'});
+    var d = await r.json();
+    if (d.ok) alert('تمت إضافة ' + d.added + ' قناة');
+    loadChannels();
 }
 
 async function addChannel() {
     var d = {
-        icon: document.getElementById('ch_icon').value.trim() || '📺',
         name: document.getElementById('ch_name').value.trim(),
         price: document.getElementById('ch_price').value,
-        problem: document.getElementById('ch_problem').value.trim()
+        icon: '📺'
     };
     if (!d.name) return alert('اكتب اسم القناة');
     var r = await fetch('/api/admin/add_channel', {
@@ -252,17 +280,19 @@ async function addChannel() {
     loadChannels();
 }
 
-async function editChannel(id, icon, name, price, problem) {
-    var n = prompt('اسم القناة:', name); if (n === null) return;
-    var p = prompt('السعر:', price); if (p === null) return;
-    var pb = prompt('المشاكل:', problem); if (pb === null) return;
-    var ic = prompt('الرمز:', icon); if (ic === null) return;
-    var r = await fetch('/api/admin/edit_channel', {
+async function toggleChannel(id) {
+    var r = await fetch('/api/admin/channels');
+    var list = await r.json();
+    var c = list.find(function(x){ return x.id === id; });
+    if (!c) return;
+    var msg = prompt('اكتب المشكلة (سيبه فاضي لو شغالة):', c.problem || '');
+    if (msg === null) return;
+    var res = await fetch('/api/admin/edit_channel', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({id: id, name: n, price: p, problem: pb, icon: ic})
+        body: JSON.stringify({id: id, problem: msg})
     });
-    var res = await r.json();
-    if (!res.ok) return alert(res.msg || 'خطأ');
+    var d = await res.json();
+    if (!d.ok) return alert(d.msg || 'خطأ');
     loadChannels();
 }
 
@@ -270,6 +300,32 @@ async function delChannel(id) {
     if (!confirm('حذف القناة؟')) return;
     await fetch('/api/admin/del_channel/' + id, {method: 'DELETE'});
     loadChannels();
+}
+
+/* ===== المشاكل ===== */
+async function loadIssues() {
+    const r = await fetch('/api/admin/issues');
+    const d = await r.json();
+    const b = document.getElementById('issuesView');
+    if (!d.length) { b.innerHTML = '<div class="empty">مفيش مشاكل</div>'; return; }
+    b.innerHTML = d.map(function(x) {
+        return '<div class="issue-card">' +
+            '<div class="ch">📺 ' + x.channel_name + '</div>' +
+            '<div class="label">من العميل:</div>' +
+            '<div><b>' + (x.customer_name || '-') + '</b> — <span style="direction:ltr">' + (x.card_number || '-') + '</span></div>' +
+            (x.phone ? '<div><span class="label">موبايل:</span> <b style="direction:ltr">' + x.phone + '</b></div>' : '') +
+            '<div class="msg">' + x.message + '</div>' +
+            '<div class="label">' + x.created_at + '</div>' +
+            '<div class="actions">' +
+            '<button class="btn btn-no btn-sm" onclick="delIssue(' + x.id + ')">🗑️ حذف</button>' +
+            '</div></div>';
+    }).join('');
+}
+
+async function delIssue(id) {
+    if (!confirm('حذف المشكلة؟')) return;
+    await fetch('/api/admin/del_issue/' + id, {method: 'DELETE'});
+    loadIssues();
 }
 
 /* ===== الرسائل ===== */
@@ -332,43 +388,4 @@ async function addMatch() {
 
 async function delMatch(id) {
     if (!confirm('حذف؟')) return;
-    await fetch('/api/admin/del_match/' + id, {method: 'DELETE'});
-    loadMatches();
-}
-
-/* ===== الإحصائيات ===== */
-async function loadStats() {
-    var r = await fetch('/api/admin/stats');
-    var d = await r.json();
-    var b = document.getElementById('statsView');
-    b.innerHTML = '<div class="stat-box">' +
-        '<div class="stat"><div class="num">' + (d.users || 0) + '</div><div class="lbl">مشتركين</div></div>' +
-        '<div class="stat"><div class="num">' + (d.active || 0) + '</div><div class="lbl">نشطين</div></div>' +
-        '<div class="stat"><div class="num">' + (d.pending || 0) + '</div><div class="lbl">طلبات معلقة</div></div>' +
-        '<div class="stat"><div class="num">' + (d.total_money || 0) + '</div><div class="lbl">إجمالي المبالغ</div></div>' +
-        '<div class="stat"><div class="num">' + (d.messages || 0) + '</div><div class="lbl">رسائل جديدة</div></div>' +
-        '<div class="stat"><div class="num">' + (d.channels || 0) + '</div><div class="lbl">قنوات</div></div>' +
-        '</div>';
-}
-
-/* ===== التبديل ===== */
-function tab(t, el) {
-    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
-    el.classList.add('active');
-    ['requests','users','channels','messages','matches','stats'].forEach(function(v){
-        document.getElementById(v+'View').classList.add('hidden');
-    });
-    document.getElementById(t+'View').classList.remove('hidden');
-    if (t === 'requests') loadRequests();
-    if (t === 'users') loadUsers();
-    if (t === 'channels') loadChannels();
-    if (t === 'messages') loadMessages();
-    if (t === 'matches') loadMatches();
-    if (t === 'stats') loadStats();
-}
-
-loadRequests();
-setInterval(loadRequests, 30000);
-</script>
-</body>
-</html>
+    await fetch('/api/admin/del_match/' + id, {method: 'DELETE'}
