@@ -41,12 +41,29 @@ class User(db.Model):
     def to_dict(self):
         days = (self.expiry - datetime.now().date()).days if self.expiry else 0
         return {
-            'phone': self.phone, 'card_number': self.card_number,
-            'name': self.name,
+            'phone': self.phone or '', 'card_number': self.card_number,
+            'name': self.name or '',
             'expiry': self.expiry.strftime('%Y-%m-%d') if self.expiry else '-',
             'last_amount': self.last_amount or 0,
             'package': self.package, 'days_left': days,
             'status': 'active' if days > 0 else 'expired'
+        }
+
+
+class Channel(db.Model):
+    __tablename__ = 'channels'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    price = db.Column(db.Float, default=0)
+    problem = db.Column(db.Text)
+    icon = db.Column(db.String(20), default='📺')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id, 'name': self.name, 'price': self.price or 0,
+            'problem': self.problem or '', 'icon': self.icon or '📺',
+            'created_at': self.created_at.strftime('%Y-%m-%d') if self.created_at else ''
         }
 
 
@@ -70,7 +87,6 @@ class RenewalRequest(db.Model):
     amount = db.Column(db.Float, default=0)
     screenshot = db.Column(db.String(255))
     status = db.Column(db.String(20), default='pending')
-    seen = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     handled_by = db.Column(db.String(50))
 
@@ -80,7 +96,6 @@ class RenewalRequest(db.Model):
             'name': self.name, 'months': self.months, 'from_phone': self.from_phone,
             'amount': self.amount or 0,
             'screenshot': self.screenshot, 'status': self.status,
-            'seen': self.seen,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M') if self.created_at else '',
             'handled_by': self.handled_by
         }
@@ -142,25 +157,15 @@ def page_remaining():
     return render_template('remaining.html', network=NETWORK)
 
 
+@app.route('/channels')
+def page_channels():
+    return render_template('channels.html', network=NETWORK)
+
+
 @app.route('/matches')
 def page_matches():
     ms = Match.query.filter_by(match_date=datetime.now().date()).all()
     return render_template('matches.html', matches=[m.to_dict() for m in ms], network=NETWORK)
-
-
-@app.route('/azkar')
-def page_azkar():
-    return render_template('azkar.html', network=NETWORK)
-
-
-@app.route('/quran')
-def page_quran():
-    return render_template('quran.html', network=NETWORK)
-
-
-@app.route('/prayer')
-def page_prayer():
-    return render_template('prayer.html', network=NETWORK)
 
 
 @app.route('/support')
@@ -169,6 +174,33 @@ def page_support():
 
 
 # ============ APIs ============
+@app.route('/api/search', methods=['POST'])
+def api_search():
+    d = request.get_json() or {}
+    q = d.get('q', '').strip()
+    if not q:
+        return jsonify({'ok': False, 'msg': 'اكتب حاجة للبحث'}), 400
+
+    results = []
+    # بحث بالرقم المشفر (دقيق)
+    u = User.query.filter_by(card_number=q).first()
+    if u:
+        results.append(u.to_dict())
+    else:
+        # بحث بالاسم أو الموبايل (تقريبي)
+        by_name = User.query.filter(User.name.contains(q)).all()
+        by_phone = User.query.filter(User.phone.contains(q)).all()
+        seen = set()
+        for x in by_name + by_phone:
+            if x.id not in seen:
+                seen.add(x.id)
+                results.append(x.to_dict())
+
+    if not results:
+        return jsonify({'ok': False, 'msg': 'مفيش نتائج'}), 404
+    return jsonify({'ok': True, 'results': results})
+
+
 @app.route('/api/check-card', methods=['POST'])
 def api_check_card():
     d = request.get_json() or {}
@@ -176,14 +208,29 @@ def api_check_card():
     u = User.query.filter_by(card_number=card).first()
     if not u:
         return jsonify({'ok': False, 'msg': 'الرقم غير مسجل'}), 404
-    # حالة آخر طلب
-    last_req = RenewalRequest.query.filter_by(card_number=card).order_by(RenewalRequest.created_at.desc()).first()
     info = u.to_dict()
-    if last_req:
-        info['last_request_status'] = last_req.status
-        info['last_request_amount'] = last_req.amount or 0
-        info['last_request_date'] = last_req.created_at.strftime('%Y-%m-%d') if last_req.created_at else ''
+    last = RenewalRequest.query.filter_by(card_number=card).order_by(RenewalRequest.created_at.desc()).first()
+    if last:
+        info['last_request_status'] = last.status
+        info['last_request_amount'] = last.amount or 0
     return jsonify({'ok': True, 'user': info})
+
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    d = request.get_json() or {}
+    name = d.get('name', '').strip()
+    card = d.get('card_number', '').strip()
+    if not name or not card:
+        return jsonify({'ok': False, 'msg': 'اكمل البيانات'}), 400
+    u = User.query.filter_by(card_number=card).first()
+    if u:
+        u.name = name
+        db.session.commit()
+    else:
+        db.session.add(User(card_number=card, name=name, expiry=datetime.now().date(), package='جديد'))
+        db.session.commit()
+    return jsonify({'ok': True})
 
 
 @app.route('/api/renew', methods=['POST'])
@@ -191,16 +238,14 @@ def api_renew():
     card = request.form.get('card_number', '').strip()
     months = int(request.form.get('months', 1))
     from_phone = request.form.get('from_phone', '').strip()
-
     if not card or not from_phone:
         return jsonify({'ok': False, 'msg': 'اكمل البيانات'}), 400
 
     existing = RenewalRequest.query.filter_by(card_number=card, status='pending').first()
     if existing:
-        return jsonify({'ok': False, 'msg': 'فيه طلب معلق بالفعل — استنى الموافقة'}), 400
+        return jsonify({'ok': False, 'msg': 'فيه طلب معلق بالفعل'}), 400
 
     u = User.query.filter_by(card_number=card).first()
-    name = u.name if u else ''
 
     fn = None
     if 'screenshot' in request.files:
@@ -211,14 +256,12 @@ def api_renew():
                 fn = secure_filename(card + "_" + str(int(datetime.now().timestamp())) + "." + ext)
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], fn))
 
-    req = RenewalRequest(
+    db.session.add(RenewalRequest(
         phone=u.phone if u else from_phone,
-        card_number=card, name=name, months=months,
-        from_phone=from_phone, screenshot=fn
-    )
-    db.session.add(req)
+        card_number=card, name=u.name if u else '',
+        months=months, from_phone=from_phone, screenshot=fn
+    ))
     db.session.commit()
-
     return jsonify({'ok': True, 'msg': 'تم إرسال الطلب'})
 
 
@@ -234,27 +277,14 @@ def api_support():
     return jsonify({'ok': True, 'msg': 'تم الإرسال'})
 
 
+@app.route('/api/channels')
+def api_channels():
+    return jsonify([c.to_dict() for c in Channel.query.order_by(Channel.id.desc()).all()])
+
+
 @app.route('/uploads/<filename>')
 def uploaded(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-
-@app.route('/api/azkar')
-def api_azkar():
-    return jsonify(load_json('azkar.json', []))
-
-
-@app.route('/api/quran')
-def api_quran():
-    q = load_json('quran.json', [])
-    if not q:
-        return jsonify({'surah': '-', 'ayah': '-', 'text': 'لا يوجد'})
-    return jsonify(random.choice(q))
-
-
-@app.route('/api/prayer')
-def api_prayer():
-    return jsonify(load_json('prayer.json', {"city": "أسيوط", "country": "مصر", "times": {}}))
 
 
 # ============ الأدمن ============
@@ -301,13 +331,56 @@ def api_admin_messages():
 @app.route('/api/admin/users')
 def api_admin_users():
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
-    return jsonify([u.to_dict() for u in User.query.all()])
+    return jsonify([u.to_dict() for u in User.query.order_by(User.id.desc()).all()])
 
 
-@app.route('/api/admin/matches')
-def api_admin_matches():
+@app.route('/api/admin/channels')
+def api_admin_channels():
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
-    return jsonify([m.to_dict() for m in Match.query.order_by(Match.match_date.desc()).all()])
+    return jsonify([c.to_dict() for c in Channel.query.order_by(Channel.id.desc()).all()])
+
+
+@app.route('/api/admin/add_channel', methods=['POST'])
+def api_admin_add_channel():
+    if 'admin_id' not in session: return jsonify({'ok': False}), 401
+    d = request.get_json() or {}
+    if not d.get('name'):
+        return jsonify({'ok': False, 'msg': 'اكتب اسم القناة'}), 400
+    try:
+        price = float(d.get('price', 0))
+    except:
+        price = 0
+    db.session.add(Channel(
+        name=d.get('name'), price=price,
+        problem=d.get('problem', ''),
+        icon=d.get('icon', '📺')
+    ))
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
+@app.route('/api/admin/edit_channel', methods=['POST'])
+def api_admin_edit_channel():
+    if 'admin_id' not in session: return jsonify({'ok': False}), 401
+    d = request.get_json() or {}
+    c = Channel.query.get(d.get('id'))
+    if not c: return jsonify({'ok': False}), 404
+    if d.get('name') is not None: c.name = d['name']
+    if d.get('price') is not None:
+        try: c.price = float(d['price'])
+        except: pass
+    if d.get('problem') is not None: c.problem = d['problem']
+    if d.get('icon') is not None: c.icon = d['icon']
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
+@app.route('/api/admin/del_channel/<int:id>', methods=['DELETE'])
+def api_admin_del_channel(id):
+    if 'admin_id' not in session: return jsonify({'ok': False}), 401
+    c = Channel.query.get(id)
+    if c: db.session.delete(c); db.session.commit()
+    return jsonify({'ok': True})
 
 
 @app.route('/api/admin/stats')
@@ -317,10 +390,11 @@ def api_admin_stats():
     active = sum(1 for u in users if u.expiry and u.expiry > datetime.now().date())
     pending = RenewalRequest.query.filter_by(status='pending').count()
     messages = SupportMessage.query.filter_by(status='new').count()
-    total_money = sum((r.amount or 0) for r in RenewalRequest.query.filter_by(status='approved').all())
+    money = sum((r.amount or 0) for r in RenewalRequest.query.filter_by(status='approved').all())
     return jsonify({
         'users': len(users), 'active': active, 'pending': pending,
-        'messages': messages, 'total_money': round(total_money, 2)
+        'messages': messages, 'total_money': round(money, 2),
+        'channels': Channel.query.count()
     })
 
 
@@ -334,12 +408,9 @@ def api_admin_handle():
     if not r: return jsonify({'ok': False}), 404
 
     if d.get('action') == 'approve':
-        try:
-            amount = float(d.get('amount', 0))
-        except:
-            amount = 0
+        try: amount = float(d.get('amount', 0))
+        except: amount = 0
         r.amount = amount
-
         u = User.query.filter_by(card_number=r.card_number).first()
         if u:
             base = u.expiry if u.expiry and u.expiry > datetime.now().date() else datetime.now().date()
@@ -349,12 +420,10 @@ def api_admin_handle():
                 u.phone = r.from_phone
         else:
             db.session.add(User(
-                phone=r.from_phone or '',
-                card_number=r.card_number,
+                phone=r.from_phone or '', card_number=r.card_number,
                 name=r.name or 'مشترك',
                 expiry=datetime.now().date() + timedelta(days=30 * r.months),
-                last_amount=amount,
-                package='شهري'
+                last_amount=amount
             ))
         r.status = 'approved'
     else:
@@ -372,14 +441,12 @@ def api_admin_add_user():
     if not card:
         return jsonify({'ok': False, 'msg': 'اكتب الرقم المشفر'}), 400
     if User.query.filter_by(card_number=card).first():
-        return jsonify({'ok': False, 'msg': 'الرقم موجود بالفعل'}), 400
-    try:
-        exp = datetime.strptime(d.get('expiry', ''), '%Y-%m-%d').date()
-    except:
-        exp = datetime.now().date() + timedelta(days=30)
+        return jsonify({'ok': False, 'msg': 'الرقم موجود'}), 400
+    try: exp = datetime.strptime(d.get('expiry', ''), '%Y-%m-%d').date()
+    except: exp = datetime.now().date() + timedelta(days=30)
     db.session.add(User(
         phone=d.get('phone', ''), card_number=card,
-        name=d.get('name', ''), expiry=exp, package='شهري'
+        name=d.get('name', ''), expiry=exp
     ))
     db.session.commit()
     return jsonify({'ok': True})
@@ -389,18 +456,13 @@ def api_admin_add_user():
 def api_admin_edit_user():
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
     d = request.get_json() or {}
-    card = d.get('card_number', '').strip()
-    u = User.query.filter_by(card_number=card).first()
+    u = User.query.filter_by(card_number=d.get('card_number', '')).first()
     if not u: return jsonify({'ok': False, 'msg': 'مش موجود'}), 404
-    if d.get('name') is not None:
-        u.name = d['name']
-    if d.get('phone') is not None:
-        u.phone = d['phone']
+    if d.get('name') is not None: u.name = d['name']
+    if d.get('phone') is not None: u.phone = d['phone']
     if d.get('expiry'):
-        try:
-            u.expiry = datetime.strptime(d['expiry'], '%Y-%m-%d').date()
-        except:
-            pass
+        try: u.expiry = datetime.strptime(d['expiry'], '%Y-%m-%d').date()
+        except: pass
     db.session.commit()
     return jsonify({'ok': True})
 
@@ -409,9 +471,7 @@ def api_admin_edit_user():
 def api_admin_del_user(card):
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
     u = User.query.filter_by(card_number=card).first()
-    if u:
-        db.session.delete(u)
-        db.session.commit()
+    if u: db.session.delete(u); db.session.commit()
     return jsonify({'ok': True})
 
 
@@ -419,10 +479,8 @@ def api_admin_del_user(card):
 def api_admin_add_match():
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
     d = request.get_json() or {}
-    try:
-        md = datetime.strptime(d.get('date', ''), '%Y-%m-%d').date()
-    except:
-        md = datetime.now().date()
+    try: md = datetime.strptime(d.get('date', ''), '%Y-%m-%d').date()
+    except: md = datetime.now().date()
     db.session.add(Match(home=d.get('home'), away=d.get('away'), time=d.get('time'),
                          channel=d.get('channel'), league=d.get('league'), match_date=md))
     db.session.commit()
@@ -433,9 +491,7 @@ def api_admin_add_match():
 def api_admin_del_match(id):
     if 'admin_id' not in session: return jsonify({'ok': False}), 401
     m = Match.query.get(id)
-    if m:
-        db.session.delete(m)
-        db.session.commit()
+    if m: db.session.delete(m); db.session.commit()
     return jsonify({'ok': True})
 
 
@@ -445,11 +501,9 @@ def init():
         db.create_all()
         if not Admin.query.first():
             db.session.add(Admin(username='admin', password_hash=generate_password_hash('Star@2026'), name='المدير', role='super_admin'))
-            db.session.add(Admin(username='employee1', password_hash=generate_password_hash('Emp@2026'), name='الموظف', role='viewer'))
         if not User.query.first():
             t = datetime.now().date()
-            db.session.add(User(phone='01006654853', card_number='1001', name='مشترك تجريبي', expiry=t + timedelta(days=30)))
-            db.session.add(User(phone='01111111111', card_number='1002abc', name='أحمد', expiry=t + timedelta(days=5)))
+            db.session.add(User(phone='01006654853', card_number='1001', name='محمود', expiry=t + timedelta(days=30)))
         db.session.commit()
         app._init = True
 
