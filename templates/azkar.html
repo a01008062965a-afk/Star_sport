@@ -7,13 +7,13 @@
 <style>
 *{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
 body{background:linear-gradient(135deg,#0f2027,#2c5364);min-height:100vh;padding:20px;color:#fff}
-h1{text-align:center;margin-bottom:20px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.cat{background:rgba(255,215,0,0.15);padding:8px 14px;border-radius:20px;display:inline-block;font-size:13px;color:#ffd200;margin-bottom:8px}
-.card{background:#fff;color:#222;border-radius:14px;padding:16px;margin-bottom:12px}
-.zikr{font-size:15px;line-height:1.9;color:#0f2027}
-.counter{display:inline-block;background:#f0f4ff;color:#2c5364;font-size:12px;padding:4px 10px;border-radius:12px;margin-top:10px;font-weight:bold}
-.back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:18px}
+h1{text-align:center;margin-bottom:10px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .count{text-align:center;color:#aaa;font-size:13px;margin-bottom:16px}
+.cat{background:rgba(255,215,0,0.15);padding:6px 14px;border-radius:20px;display:inline-block;font-size:12px;color:#ffd200;margin-bottom:8px}
+.card{background:#fff;color:#222;border-radius:14px;padding:16px;margin-bottom:12px;max-width:500px;margin-left:auto;margin-right:auto}
+.zikr{font-size:15px;line-height:1.9;color:#0f2027}
+.back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:18px}
+.empty{text-align:center;color:#aaa;padding:40px}
 </style>
 </head>
 <body>
@@ -21,15 +21,32 @@ h1{text-align:center;margin-bottom:20px;background:linear-gradient(90deg,#f7971e
 <div class="count" id="count">جاري التحميل...</div>
 <div id="list"></div>
 <a href="/" class="back">← رجوع للرئيسية</a>
+
 <script>
-fetch('/api/azkar').then(r=>r.json()).then(d=>{
-document.getElementById('count').textContent='📖 '+d.length+' ذكر';
-document.getElementById('list').innerHTML=d.map(z=>`
-<div class="card">
-<div class="cat">${z.category}</div>
-<div class="zikr">${z.text}</div>
-</div>`).join('');
-});
+fetch('/api/azkar')
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var el = document.getElementById('count');
+    var list = document.getElementById('list');
+    if (!data || data.length === 0) {
+      el.textContent = 'مفيش أذكار';
+      list.innerHTML = '<div class="empty">لا يوجد أذكار حالياً</div>';
+      return;
+    }
+    el.textContent = '📖 ' + data.length + ' ذكر';
+    var html = '';
+    for (var i = 0; i < data.length; i++) {
+      html += '<div class="card">';
+      html += '<div class="cat">' + (data[i].category || '') + '</div>';
+      html += '<div class="zikr">' + (data[i].text || '') + '</div>';
+      html += '</div>';
+    }
+    list.innerHTML = html;
+  })
+  .catch(function(e) {
+    document.getElementById('count').textContent = 'خطأ في الاتصال';
+    console.log(e);
+  });
 </script>
 </body>
 </html>
