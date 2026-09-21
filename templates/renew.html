@@ -12,23 +12,26 @@ h2{font-size:18px;margin-bottom:14px;color:#0f2027}
 label{display:block;font-size:14px;margin:10px 0 4px;color:#444}
 input[type=text],input[type=tel],select{width:100%;padding:12px;font-size:16px;border:2px solid #ddd;border-radius:10px;margin-bottom:8px}
 input:focus,select:focus{border-color:#2c5364;outline:none}
-button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px}
+button{width:100%;padding:14px;font-size:16px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin-top:8px}
 .back{display:block;text-align:center;color:#888;text-decoration:none;margin-top:12px;font-size:14px}
 .support{display:block;text-align:center;color:#e53935;text-decoration:none;margin-top:10px;font-size:13px}
-.info-row{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee;font-size:15px}
 .phone-box{background:#f0f4ff;padding:14px;border-radius:10px;text-align:center;direction:ltr;font-size:20px;font-weight:bold;color:#2c5364;letter-spacing:1px;margin:10px 0;cursor:pointer}
 .phone-box:active{background:#d6e0ff}
-.status{padding:10px;border-radius:10px;text-align:center;font-weight:bold;margin-bottom:12px}
+.info-row{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee;font-size:15px}
+.status{padding:12px;border-radius:10px;text-align:center;font-weight:bold;margin-bottom:12px;font-size:15px}
 .active{background:#e8f5e9;color:#2e7d32}
 .expired{background:#ffebee;color:#c62828}
+.pending{background:#fff8e1;color:#ef6c00}
+.rejected{background:#ffebee;color:#c62828}
 .hidden{display:none}
-.success{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold}
+.success{background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:10px;text-align:center;font-weight:bold;line-height:1.7}
 .note{background:#fff8e1;border-right:4px solid #ffb300;padding:12px;border-radius:8px;font-size:13px;line-height:1.7;margin:10px 0}
 .btn-row{display:flex;gap:8px;margin:8px 0}
 .btn-row button{flex:1;padding:12px;font-size:14px;background:#2c5364;color:#fff;border-radius:10px;border:none;cursor:pointer;font-weight:bold}
 .file-info{font-size:12px;color:#2e7d32;text-align:center;margin-top:6px;display:none}
 .copied{background:#c8e6c9 !important;color:#2e7d32 !important}
 .new-user{background:#e3f2fd;color:#1565c0;padding:12px;border-radius:10px;text-align:center;font-size:13px;margin-bottom:12px;line-height:1.7}
+.welcome{text-align:center;font-size:15px;color:#ffd200;background:#0f2027;padding:10px;border-radius:10px;margin-bottom:12px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -45,7 +48,10 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 
 <!-- شاشة 2 -->
 <div class="card hidden" id="s2">
+<div class="welcome" id="welcome">👋 أهلاً بيك</div>
 <div id="userInfo"></div>
+<div id="blockMsg" class="hidden"></div>
+<div id="renewForm">
 <label>اختر مدة التجديد</label>
 <select id="months">
 <option value="1">شهر واحد</option>
@@ -53,6 +59,7 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 <option value="3">3 شهور</option>
 </select>
 <button onclick="showPay()">التالي ←</button>
+</div>
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
@@ -61,7 +68,7 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 <h2>خطوات الدفع</h2>
 <div class="note">
 <b>1) حوّل على الرقم:</b>
-<div class="phone-box" id="vodafone" onclick="copyNum(this)">01006654853</div>
+<div class="phone-box" onclick="copyNum(this)">01006654853</div>
 <div style="text-align:center;font-size:12px;color:#666">فودافون كاش أو إنستاباي — اضغط للنسخ 📋</div>
 </div>
 <label>2) الرقم اللي حوّلت منه</label>
@@ -90,39 +97,51 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 </div>
 
 <script>
-let curCard = null;
-let curFile = null;
+var curCard = null, curFile = null;
 
 async function nextStep() {
-    const c = document.getElementById('card1').value.trim();
+    var c = document.getElementById('card1').value.trim();
     if (!c) return alert('ادخل الرقم المشفر');
     curCard = c;
+    localStorage.setItem('last_card', c);
 
     try {
-        const r = await fetch('/api/check-card', {
+        var r = await fetch('/api/check-card', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({card_number: c})
         });
-        const d = await r.json();
-        const box = document.getElementById('userInfo');
+        var d = await r.json();
+        var box = document.getElementById('userInfo');
+        var welcome = document.getElementById('welcome');
+        var block = document.getElementById('blockMsg');
+        var form = document.getElementById('renewForm');
+
+        // reset
+        block.classList.add('hidden');
+        form.classList.remove('hidden');
+
         if (d.ok) {
-            box.innerHTML = `
-                <div class="status ${d.user.status === 'active' ? 'active' : 'expired'}">
-                    ${d.user.status === 'active' ? '✅ اشتراكك شغال' : '❌ الاشتراك خلص'}
-                </div>
-                <div class="info-row"><span>الاسم:</span><b>${d.user.name || '-'}</b></div>
-                <div class="info-row"><span>ينتهي:</span><b>${d.user.expiry}</b></div>
-                <div class="info-row"><span>فاضل:</span><b>${d.user.days_left > 0 ? d.user.days_left + ' يوم' : 'خلص'}</b></div>
-            `;
+            var u = d.user;
+            welcome.innerHTML = '👋 أهلاً بيك يا ' + (u.name || 'صديقنا');
+            box.innerHTML =
+                '<div class="status ' + (u.status === 'active' ? 'active' : 'expired') + '">' +
+                    (u.status === 'active' ? '✅ اشتراكك شغال' : '❌ الاشتراك خلص') +
+                '</div>' +
+                '<div class="info-row"><span>ينتهي:</span><b>' + u.expiry + '</b></div>' +
+                '<div class="info-row"><span>فاضل:</span><b>' + (u.days_left > 0 ? u.days_left + ' يوم' : 'خلص') + '</b></div>';
+
+            // لو فيه طلب معلق
+            if (u.last_request_status === 'pending') {
+                block.classList.remove('hidden');
+                block.innerHTML = '<div class="status pending">⏳ فيه طلب معلق بالفعل<br><span style="font-size:12px;font-weight:normal">استنى الموافقة أو الرفض</span></div>';
+                form.classList.add('hidden');
+            }
         } else {
-            box.innerHTML = `
-                <div class="new-user">
-                    📝 <b>مشترك جديد</b><br>
-                    الرقم ده مش مسجل عندنا — بعد ما تحوّل، انتظر الموافقة وهيتم تسجيلك تلقائياً
-                </div>
-            `;
+            welcome.innerHTML = '👋 أهلاً بيك';
+            box.innerHTML = '<div class="new-user">📝 <b>مشترك جديد</b><br>الرقم ده مش مسجل — بعد ما تحوّل، انتظر الموافقة وهيتم تسجيلك تلقائياً</div>';
         }
+
         document.getElementById('s1').classList.add('hidden');
         document.getElementById('s2').classList.remove('hidden');
     } catch(e) { alert('خطأ في الاتصال'); }
@@ -136,7 +155,7 @@ function showPay() {
 function copyNum(el) {
     navigator.clipboard.writeText(el.textContent.trim());
     el.classList.add('copied');
-    setTimeout(() => el.classList.remove('copied'), 1000);
+    setTimeout(function(){ el.classList.remove('copied'); }, 1000);
 }
 
 function picked(inp) {
@@ -147,21 +166,20 @@ function picked(inp) {
 }
 
 async function sendReq() {
-    const months = document.getElementById('months').value;
-    const fromPhone = document.getElementById('fromPhone').value.trim();
-
+    var months = document.getElementById('months').value;
+    var fromPhone = document.getElementById('fromPhone').value.trim();
     if (!fromPhone) return alert('اكتب الرقم اللي حوّلت منه');
     if (!curFile) return alert('ارفع صورة التحويل');
 
-    const fd = new FormData();
+    var fd = new FormData();
     fd.append('card_number', curCard);
     fd.append('months', months);
     fd.append('from_phone', fromPhone);
     fd.append('screenshot', curFile);
 
     try {
-        const r = await fetch('/api/renew', { method: 'POST', body: fd });
-        const d = await r.json();
+        var r = await fetch('/api/renew', { method: 'POST', body: fd });
+        var d = await r.json();
         if (!d.ok) return alert(d.msg);
         document.getElementById('s3').classList.add('hidden');
         document.getElementById('s4').classList.remove('hidden');
