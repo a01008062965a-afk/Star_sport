@@ -3,180 +3,323 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الأدمن</title>
+<title>لوحة التحكم — Star Sport</title>
 <style>
 *{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
-body{background:#f4f6f9;color:#222}
-header{background:linear-gradient(90deg,#0f2027,#2c5364);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+body{background:#f0f2f5;color:#222;padding-bottom:30px}
+header{background:linear-gradient(90deg,#0f2027,#2c5364);color:#fff;padding:18px 20px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
 header h1{margin:0;font-size:18px}
-header .info{font-size:13px;color:#ffd200}
-header a{color:#fff;text-decoration:none;font-size:14px}
-.tabs{display:flex;gap:6px;padding:12px;background:#fff;overflow-x:auto}
-.tab{padding:8px 14px;background:#f0f4ff;border-radius:8px;cursor:pointer;font-size:13px;font-weight:bold;white-space:nowrap;border:2px solid transparent}
-.tab.active{border-color:#2c5364;color:#2c5364}
+header .info{font-size:12px;color:#ffd200;margin-top:4px}
+header .logout{float:left;color:#fff;text-decoration:none;font-size:13px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
+.tabs{display:flex;gap:4px;padding:12px;background:#fff;overflow-x:auto;border-bottom:1px solid #e0e0e0}
+.tab{padding:8px 14px;background:#f0f2f5;border-radius:8px;cursor:pointer;font-size:13px;font-weight:bold;white-space:nowrap;border:2px solid transparent;transition:.2s}
+.tab.active{background:linear-gradient(90deg,#f7971e,#ffd200);border-color:#f7971e;color:#222}
 .container{padding:14px;max-width:800px;margin:0 auto}
-.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.row{display:flex;justify-content:space-between;align-items:start;gap:8px;flex-wrap:wrap}
+.label{color:#666;font-size:12px}
+.value{font-weight:bold;color:#0f2027;font-size:14px;direction:ltr;text-align:left}
 .phone{font-size:16px;font-weight:bold;color:#0f2027;direction:ltr}
-.name{color:#666;font-size:13px;margin-top:4px}
-.meta{font-size:12px;color:#888;margin-top:5px}
-.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold}
+.name{color:#444;font-size:13px;margin-top:3px}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold;white-space:nowrap}
 .pending{background:#fff3e0;color:#ef6c00}
 .approved{background:#e8f5e9;color:#2e7d32}
 .rejected{background:#ffebee;color:#c62828}
 .active-b{background:#e8f5e9;color:#2e7d32}
 .expired-b{background:#ffebee;color:#c62828}
-.new-b{background:#e3f2fd;color:#1565c0}
-.row{display:flex;justify-content:space-between;align-items:start;gap:8px}
-.actions{display:flex;gap:6px;margin-top:10px}
-.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;transition:.2s}
 .btn-ok{background:#25D366;color:#fff}
+.btn-ok:hover{background:#1da851}
 .btn-no{background:#e53935;color:#fff}
-.btn-add{background:#2c5364;color:#fff;padding:10px 16px;font-size:14px}
-.empty{text-align:center;color:#999;padding:30px}
+.btn-no:hover{background:#c62828}
+.btn-blue{background:#2c5364;color:#fff}
+.btn-gray{background:#999;color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+.img-box{margin-top:10px}
+.img-box img{max-width:100%;max-height:280px;border-radius:10px;border:2px solid #eee;cursor:pointer}
+.img-box a{color:#2c5364;text-decoration:none;font-size:13px;font-weight:bold}
+.money{background:#fff8e1;border-right:4px solid #ffb300;padding:10px;border-radius:8px;margin-top:10px}
+.money label{font-size:12px;color:#666;display:block;margin-bottom:4px}
+.money input{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:15px;font-family:Tahoma}
+.money input:focus{border-color:#2c5364;outline:none}
+.empty{text-align:center;color:#999;padding:40px;font-size:14px}
 .hidden{display:none}
-input,select,textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
+input[type=text],input[type=tel],input[type=date]{width:100%;padding:11px;border:2px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
+input:focus{border-color:#2c5364;outline:none}
+.add-form{background:#f9f9f9;border-radius:12px;padding:16px;margin-bottom:16px;border:2px dashed #ddd}
+.add-form h3{margin-bottom:12px;color:#0f2027;font-size:15px}
+.file-info{font-size:11px;color:#888;margin-top:4px}
 </style>
 </head>
 <body>
 
 <header>
 <div>
-<h1>🏆 لوحة تحكم استار سبورت</h1>
+<h1>🏆 لوحة تحكم Star Sport</h1>
 <div class="info">أهلاً {{ admin_name }} — {{ admin_role }}</div>
 </div>
-<a href="/admin/logout">خروج</a>
+<a href="/admin/logout" class="logout">خروج</a>
 </header>
 
 <div class="tabs">
-<div class="tab active" onclick="switchTab('requests',this)">📥 طلبات</div>
-<div class="tab" onclick="switchTab('messages',this)">📩 رسائل</div>
-<div class="tab" onclick="switchTab('users',this)">👥 مشتركين</div>
-<div class="tab" onclick="switchTab('matches',this)">⚽ مباريات</div>
+<div class="tab active" onclick="tab('requests',this)">📥 الطلبات</div>
+<div class="tab" onclick="tab('users',this)">👥 المشتركين</div>
+<div class="tab" onclick="tab('messages',this)">📩 الدعم</div>
+<div class="tab" onclick="tab('matches',this)">⚽ المباريات</div>
+<div class="tab" onclick="tab('stats',this)">📊 إحصائيات</div>
 </div>
 
 <div class="container">
 <div id="requestsView"></div>
-<div id="messagesView" class="hidden"></div>
 <div id="usersView" class="hidden"></div>
+<div id="messagesView" class="hidden"></div>
 <div id="matchesView" class="hidden"></div>
+<div id="statsView" class="hidden"></div>
 </div>
 
 <script>
-const ROLE="{{ admin_role }}";
+const ROLE = "{{ admin_role }}";
 
-async function loadRequests(){
-const r=await fetch('/api/admin/requests');const d=await r.json();
-const b=document.getElementById('requestsView');
-if(!d.length){b.innerHTML='<div class="empty">مفيش طلبات</div>';return}
-b.innerHTML=d.map(x=>`<div class="card">
-<div class="row">
-<div>
-<div class="phone">${x.phone}</div>
-<div class="name">${x.name||'-'}</div>
-<div class="meta">${x.months} شهر — ${x.created_at}</div>
-${x.handled_by?'<div class="meta">بواسطة: '+x.handled_by+'</div>':''}
-</div>
-<span class="badge ${x.status}">${x.status==='pending'?'⏳ معلق':x.status==='approved'?'✅ تم':'❌ مرفوض'}</span>
-</div>
-${x.status==='pending'&&ROLE==='super_admin'?`<div class="actions">
-<button class="btn btn-ok" onclick="handle(${x.id},'approve')">✅ موافقة</button>
-<button class="btn btn-no" onclick="handle(${x.id},'reject')">❌ رفض</button>
-</div>`:''}
-</div>`).join('');
+/* ===== الطلبات ===== */
+async function loadRequests() {
+    const r = await fetch('/api/admin/requests');
+    const d = await r.json();
+    const b = document.getElementById('requestsView');
+    if (!d.length) { b.innerHTML = '<div class="empty">مفيش طلبات</div>'; return; }
+    b.innerHTML = d.map(function(x) {
+        var img = '';
+        if (x.screenshot) {
+            img = '<div class="img-box"><a href="/uploads/' + x.screenshot + '" target="_blank">📷 عرض صورة التحويل</a><br><img src="/uploads/' + x.screenshot + '" onclick="window.open(this.src)"></div>';
+        }
+        var money = '';
+        if (x.status === 'pending' && ROLE === 'super_admin') {
+            money = '<div class="money"><label>💰 المبلغ المحوّل:</label><input type="number" id="amt_' + x.id + '" placeholder="اكتب المبلغ" value="' + (x.amount || '') + '"></div>';
+        } else if (x.amount) {
+            money = '<div class="money"><label>💰 المبلغ:</label><b>' + x.amount + ' جنيه</b></div>';
+        }
+        var actions = '';
+        if (x.status === 'pending' && ROLE === 'super_admin') {
+            actions = '<div class="actions"><button class="btn btn-ok" onclick="handle(' + x.id + ', \'approve\')">✅ موافقة</button><button class="btn btn-no" onclick="handle(' + x.id + ', \'reject\')">❌ رفض</button></div>';
+        }
+        var stTxt = x.status === 'pending' ? '⏳ معلق' : (x.status === 'approved' ? '✅ تم' : '❌ مرفوض');
+        return '<div class="card">' +
+            '<div class="row">' +
+            '<div style="flex:1">' +
+            '<div class="label">الرقم المشفر:</div>' +
+            '<div class="phone">' + x.card_number + '</div>' +
+            '<div class="name">' + (x.name || 'مشترك جديد') + '</div>' +
+            '<div style="margin-top:8px"><span class="label">المدة:</span> <b>' + x.months + ' شهر</b></div>' +
+            '<div><span class="label">حوّل من:</span> <b style="direction:ltr">' + (x.from_phone || '-') + '</b></div>' +
+            '<div class="file-info">' + x.created_at + '</div>' +
+            '</div>' +
+            '<span class="badge ' + x.status + '">' + stTxt + '</span>' +
+            '</div>' +
+            img + money + actions +
+            '</div>';
+    }).join('');
 }
 
-async function loadMessages(){
-const r=await fetch('/api/admin/messages');const d=await r.json();
-const b=document.getElementById('messagesView');
-if(!d.length){b.innerHTML='<div class="empty">مفيش رسائل</div>';return}
-b.innerHTML=d.map(x=>`<div class="card">
-<div class="row">
-<div>
-<div class="phone">${x.phone}</div>
-<div class="name">${x.name||'-'}</div>
-<div class="meta">${x.created_at}</div>
-</div>
-<span class="badge new-b">جديد</span>
-</div>
-<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:8px;font-size:14px;line-height:1.7">${x.message}</div>
-</div>`).join('');
+async function handle(id, action) {
+    var amt = '';
+    if (action === 'approve') {
+        var inp = document.getElementById('amt_' + id);
+        amt = inp ? inp.value.trim() : '';
+        if (!amt) { alert('اكتب المبلغ الأول'); return; }
+    }
+    if (!confirm('متأكد؟')) return;
+    var body = {id: id, action: action, amount: amt};
+    var r = await fetch('/api/admin/handle', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+    });
+    var d = await r.json();
+    if (!d.ok) return alert(d.msg || 'خطأ');
+    loadRequests();
 }
 
-async function loadUsers(){
-const r=await fetch('/api/admin/users');const d=await r.json();
-const b=document.getElementById('usersView');
-if(!d.length){b.innerHTML='<div class="empty">مفيش مشتركين</div>';return}
-b.innerHTML=d.map(u=>`<div class="card">
-<div class="row">
-<div>
-<div class="phone">${u.phone}</div>
-<div class="name">${u.name||'-'}</div>
-<div class="meta">ينتهي: ${u.expiry} — فاضل ${u.days_left} يوم</div>
-</div>
-<span class="badge ${u.status==='active'?'active-b':'expired-b'}">${u.status==='active'?'✅ شغال':'❌ منتهي'}</span>
-</div>
-</div>`).join('');
+/* ===== المشتركين ===== */
+async function loadUsers() {
+    const r = await fetch('/api/admin/users');
+    const d = await r.json();
+    const b = document.getElementById('usersView');
+    var form = '<div class="add-form"><h3>➕ إضافة مشترك جديد</h3>' +
+        '<input type="text" id="nu_card" placeholder="الرقم المشفر">' +
+        '<input type="text" id="nu_name" placeholder="الاسم">' +
+        '<input type="tel" id="nu_phone" placeholder="رقم الموبايل">' +
+        '<input type="date" id="nu_expiry" placeholder="تاريخ الانتهاء">' +
+        '<button class="btn btn-blue" onclick="addUser()" style="width:100%;margin-top:6px">إضافة</button></div>';
+    if (!d.length) {
+        b.innerHTML = form + '<div class="empty">مفيش مشتركين</div>';
+        return;
+    }
+    var list = d.map(function(u) {
+        var st = u.status === 'active' ? '✅ شغال' : '❌ منتهي';
+        var stc = u.status === 'active' ? 'active-b' : 'expired-b';
+        return '<div class="card">' +
+            '<div class="row">' +
+            '<div style="flex:1">' +
+            '<div class="phone">' + u.card_number + '</div>' +
+            '<div class="name">' + (u.name || '-') + '</div>' +
+            '<div><span class="label">موبايل:</span> <b style="direction:ltr">' + (u.phone || '-') + '</b></div>' +
+            '<div><span class="label">ينتهي:</span> <b>' + u.expiry + '</b></div>' +
+            '<div><span class="label">فاضل:</span> <b>' + (u.days_left > 0 ? u.days_left + ' يوم' : 'خلص') + '</b></div>' +
+            '</div>' +
+            '<span class="badge ' + stc + '">' + st + '</span>' +
+            '</div>' +
+            '<div class="actions">' +
+            '<button class="btn btn-blue btn-sm" onclick="editUser(\'' + u.card_number + '\',\'' + (u.name || '') + '\',\'' + (u.phone || '') + '\',\'' + u.expiry + '\')">✏️ تعديل</button>' +
+            '<button class="btn btn-no btn-sm" onclick="delUser(\'' + u.card_number + '\')">🗑️ حذف</button>' +
+            '</div>' +
+            '</div>';
+    }).join('');
+    b.innerHTML = form + list;
 }
 
-async function loadMatches(){
-const r=await fetch('/api/admin/matches');const d=await r.json();
-const b=document.getElementById('matchesView');
-b.innerHTML=`<div class="card">
-<h3 style="margin-bottom:10px">➕ إضافة مباراة</h3>
-<input id="mh" placeholder="الفريق الأول">
-<input id="ma" placeholder="الفريق الثاني">
-<input id="mt" placeholder="الوقت (مثال: 21:00)">
-<input id="mc" placeholder="القناة">
-<input id="ml" placeholder="الدوري">
-<button class="btn btn-add" onclick="addMatch()">إضافة</button>
-</div>`+(d.length?d.map(m=>`<div class="card">
-<div class="row">
-<div>
-<div class="phone">${m.home} × ${m.away}</div>
-<div class="meta">${m.time} — ${m.channel}</div>
-<div class="meta">${m.league}</div>
-</div>
-<button class="btn btn-no" onclick="delMatch(${m.id})">🗑️</button>
-</div>
-</div>`).join(''):'<div class="empty">مفيش مباريات</div>');
+async function addUser() {
+    var d = {
+        card_number: document.getElementById('nu_card').value.trim(),
+        name: document.getElementById('nu_name').value.trim(),
+        phone: document.getElementById('nu_phone').value.trim(),
+        expiry: document.getElementById('nu_expiry').value
+    };
+    if (!d.card_number) return alert('اكتب الرقم المشفر');
+    var r = await fetch('/api/admin/add_user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(d)
+    });
+    var res = await r.json();
+    if (!res.ok) return alert(res.msg || 'خطأ');
+    alert('تمت الإضافة');
+    loadUsers();
 }
 
-async function handle(id,a){
-if(!confirm('متأكد؟'))return;
-const r=await fetch('/api/admin/handle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,action:a})});
-const d=await r.json();
-if(!d.ok)return alert(d.msg||'خطأ');
+async function editUser(card, name, phone, expiry) {
+    var n = prompt('الاسم:', name);
+    if (n === null) return;
+    var p = prompt('رقم الموبايل:', phone);
+    if (p === null) return;
+    var e = prompt('تاريخ الانتهاء (YYYY-MM-DD):', expiry);
+    if (e === null) return;
+    var r = await fetch('/api/admin/edit_user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({card_number: card, name: n, phone: p, expiry: e})
+    });
+    var res = await r.json();
+    if (!res.ok) return alert(res.msg || 'خطأ');
+    alert('تم التعديل');
+    loadUsers();
+}
+
+async function delUser(card) {
+    if (!confirm('حذف المشترك؟')) return;
+    var r = await fetch('/api/admin/del_user/' + card, {method: 'DELETE'});
+    var res = await r.json();
+    if (!res.ok) return alert(res.msg || 'خطأ');
+    loadUsers();
+}
+
+/* ===== الرسائل ===== */
+async function loadMessages() {
+    var r = await fetch('/api/admin/messages');
+    var d = await r.json();
+    var b = document.getElementById('messagesView');
+    if (!d.length) { b.innerHTML = '<div class="empty">مفيش رسائل</div>'; return; }
+    b.innerHTML = d.map(function(x) {
+        return '<div class="card">' +
+            '<div class="phone">' + x.phone + '</div>' +
+            '<div class="name">' + (x.name || '-') + '</div>' +
+            '<div class="file-info">' + x.created_at + '</div>' +
+            '<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:8px;font-size:14px;line-height:1.7">' + x.message + '</div>' +
+            '</div>';
+    }).join('');
+}
+
+/* ===== المباريات ===== */
+async function loadMatches() {
+    var r = await fetch('/api/admin/matches');
+    var d = await r.json();
+    var b = document.getElementById('matchesView');
+    var form = '<div class="add-form"><h3>➕ إضافة مباراة</h3>' +
+        '<input type="text" id="m_home" placeholder="الفريق الأول">' +
+        '<input type="text" id="m_away" placeholder="الفريق الثاني">' +
+        '<input type="text" id="m_time" placeholder="الوقت (21:00)">' +
+        '<input type="text" id="m_channel" placeholder="القناة">' +
+        '<input type="text" id="m_league" placeholder="الدوري">' +
+        '<input type="date" id="m_date">' +
+        '<button class="btn btn-blue" onclick="addMatch()" style="width:100%;margin-top:6px">إضافة</button></div>';
+    if (!d.length) { b.innerHTML = form + '<div class="empty">مفيش مباريات</div>'; return; }
+    var list = d.map(function(m) {
+        return '<div class="card"><div class="row">' +
+            '<div><div class="phone">' + m.home + ' × ' + m.away + '</div>' +
+            '<div class="name">' + m.time + ' — ' + m.channel + '</div>' +
+            '<div class="file-info">' + m.league + ' | ' + m.date + '</div></div>' +
+            '<button class="btn btn-no btn-sm" onclick="delMatch(' + m.id + ')">🗑️</button>' +
+            '</div></div>';
+    }).join('');
+    b.innerHTML = form + list;
+}
+
+async function addMatch() {
+    var d = {
+        home: document.getElementById('m_home').value,
+        away: document.getElementById('m_away').value,
+        time: document.getElementById('m_time').value,
+        channel: document.getElementById('m_channel').value,
+        league: document.getElementById('m_league').value,
+        date: document.getElementById('m_date').value
+    };
+    if (!d.home || !d.away) return alert('اكتب أسماء الفرق');
+    var r = await fetch('/api/admin/add_match', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(d)
+    });
+    var res = await r.json();
+    if (!res.ok) return alert('خطأ');
+    loadMatches();
+}
+
+async function delMatch(id) {
+    if (!confirm('حذف؟')) return;
+    await fetch('/api/admin/del_match/' + id, {method: 'DELETE'});
+    loadMatches();
+}
+
+/* ===== الإحصائيات ===== */
+async function loadStats() {
+    var r = await fetch('/api/admin/stats');
+    var d = await r.json();
+    var b = document.getElementById('statsView');
+    b.innerHTML = '<div class="card"><h3 style="margin-bottom:12px">📊 إحصائيات</h3>' +
+        '<div class="row"><span class="label">إجمالي المشتركين:</span><b>' + (d.users || 0) + '</b></div>' +
+        '<div class="row"><span class="label">المشتركين النشطين:</span><b>' + (d.active || 0) + '</b></div>' +
+        '<div class="row"><span class="label">طلبات معلقة:</span><b>' + (d.pending || 0) + '</b></div>' +
+        '<div class="row"><span class="label">إجمالي المبالغ:</span><b>' + (d.total_money || 0) + ' جنيه</b></div>' +
+        '<div class="row"><span class="label">رسائل جديدة:</span><b>' + (d.messages || 0) + '</b></div>' +
+        '</div>';
+}
+
+/* ===== التبديل ===== */
+function tab(t, el) {
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+    el.classList.add('active');
+    ['requests','users','messages','matches','stats'].forEach(function(v){
+        document.getElementById(v+'View').classList.add('hidden');
+    });
+    document.getElementById(t+'View').classList.remove('hidden');
+    if (t === 'requests') loadRequests();
+    if (t === 'users') loadUsers();
+    if (t === 'messages') loadMessages();
+    if (t === 'matches') loadMatches();
+    if (t === 'stats') loadStats();
+}
+
 loadRequests();
-}
-
-async function addMatch(){
-const body={home:mh.value,away:ma.value,time:mt.value,channel:mc.value,league:ml.value};
-if(!body.home||!body.away)return alert('اكمل البيانات');
-await fetch('/api/admin/add_match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-loadMatches();
-}
-
-async function delMatch(id){
-if(!confirm('حذف؟'))return;
-await fetch('/api/admin/del_match/'+id,{method:'DELETE'});
-loadMatches();
-}
-
-function switchTab(t,el){
-document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-el.classList.add('active');
-['requests','messages','users','matches'].forEach(v=>{
-document.getElementById(v+'View').classList.add('hidden');
-});
-document.getElementById(t+'View').classList.remove('hidden');
-if(t==='requests')loadRequests();
-if(t==='messages')loadMessages();
-if(t==='users')loadUsers();
-if(t==='matches')loadMatches();
-}
-
-loadRequests();
-setInterval(loadRequests,30000);
+setInterval(loadRequests, 30000);
 </script>
 </body>
 </html>
