@@ -5,51 +5,210 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Star Sport Services</title>
 <style>
-*{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0;padding:0}
-body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);min-height:100vh;padding:20px;color:#fff;display:flex;align-items:center;justify-content:center}
-.card{background:#1a1a1a;border:2px solid #ffd200;border-radius:20px;padding:24px 18px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(255,210,0,0.2)}
-.welcome{text-align:center;margin-bottom:8px;font-size:16px;color:#ffd200;font-weight:bold}
-.title{text-align:center;font-size:22px;font-weight:bold;color:#fff;margin-bottom:4px}
-.divider{text-align:center;color:#ffd200;margin:16px 0;letter-spacing:2px;opacity:0.4;font-size:12px}
-.list{display:flex;flex-direction:column;gap:10px;margin:12px 0}
-.btn{background:#fff;color:#0f2027;border-radius:12px;padding:15px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;font-weight:bold;font-size:15px;transition:.15s;box-shadow:0 3px 10px rgba(0,0,0,0.25)}
-.btn:active{transform:scale(.97);background:#ffd200}
-.btn .icon{font-size:24px}
-.btn .label{flex:1;text-align:right}
-.btn .arrow{color:#888;font-size:18px}
-.footer{text-align:center;color:#888;font-size:12px;margin-top:14px}
+*{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(160deg,#0a1929 0%,#0f2027 40%,#1a3a4a 100%);min-height:100vh;color:#fff;overflow-x:hidden}
+
+/* الشاشة الأولى */
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(255,210,0,0.15),transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:250px;height:250px;background:radial-gradient(circle,rgba(0,150,255,0.12),transparent 70%);border-radius:50%}
+
+.logo{font-size:52px;margin-bottom:10px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.brand{font-size:26px;font-weight:bold;background:linear-gradient(90deg,#f7971e,#ffd200,#f7971e);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 3s linear infinite;margin-bottom:6px}
+@keyframes shine{to{background-position:200% center}}
+
+.tagline{color:#7a9bab;font-size:13px;margin-bottom:30px}
+
+.box{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(255,210,0,0.2);border-radius:20px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+
+.welcome-title{font-size:20px;color:#ffd200;margin-bottom:6px;font-weight:bold}
+.welcome-sub{font-size:13px;color:#a0b8c4;margin-bottom:20px}
+
+.field{margin-bottom:14px;text-align:right}
+.field label{display:block;font-size:13px;color:#a0b8c4;margin-bottom:6px;padding-right:6px}
+.field input{width:100%;padding:14px 16px;font-size:16px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,210,0,0.15);border-radius:12px;color:#fff;font-family:Tahoma;text-align:right;transition:.2s}
+.field input:focus{outline:none;border-color:#ffd200;background:rgba(255,255,255,0.12)}
+.field input::placeholder{color:#5a7a8a}
+
+.btn-main{width:100%;padding:16px;font-size:17px;background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027;border:none;border-radius:14px;cursor:pointer;font-weight:bold;margin-top:8px;box-shadow:0 6px 20px rgba(255,210,0,0.3);transition:.2s;font-family:Tahoma}
+.btn-main:active{transform:scale(.97);box-shadow:0 3px 10px rgba(255,210,0,0.4)}
+
+.hint{font-size:12px;color:#5a7a8a;margin-top:14px}
+
+/* الشاشة الثانية */
+.services{padding:24px 20px;max-width:440px;margin:0 auto;min-height:100vh;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.user-bar{background:linear-gradient(135deg,rgba(255,210,0,0.15),rgba(255,210,0,0.05));border:1px solid rgba(255,210,0,0.3);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center}
+.user-bar .hi{font-size:14px;color:#a0b8c4;margin-bottom:4px}
+.user-bar .name{font-size:20px;color:#ffd200;font-weight:bold;margin-bottom:4px}
+.user-bar .card-num{font-size:12px;color:#7a9bab;direction:ltr}
+
+.user-bar .status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-top:8px}
+.badge-active{background:#1b5e20;color:#a5d6a7}
+.badge-expired{background:#b71c1c;color:#ef9a9a}
+
+.services-title{text-align:center;font-size:15px;color:#a0b8c4;margin-bottom:16px}
+
+.grid{display:flex;flex-direction:column;gap:12px}
+
+.tile{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 20px;text-decoration:none;display:flex;align-items:center;gap:16px;color:#fff;transition:.2s;backdrop-filter:blur(5px)}
+.tile:active{transform:scale(.98);background:rgba(255,210,0,0.12);border-color:rgba(255,210,0,0.4)}
+.tile .icon{font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,210,0,0.2),rgba(255,210,0,0.05));border-radius:12px;flex-shrink:0}
+.tile .text{flex:1;text-align:right}
+.tile .text .t{font-size:16px;font-weight:bold;color:#fff;margin-bottom:2px}
+.tile .text .s{font-size:12px;color:#7a9bab}
+.tile .arrow{color:#ffd200;font-size:20px;opacity:0.7}
+
+.tile.primary{background:linear-gradient(135deg,rgba(247,151,30,0.25),rgba(255,210,0,0.15));border-color:rgba(255,210,0,0.5)}
+.tile.primary .text .t{color:#ffd200}
+
+.footer{text-align:center;color:#5a7a8a;font-size:12px;margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05)}
+.footer a{color:#7a9bab;text-decoration:none;font-size:11px;margin:0 8px}
+
+.hidden{display:none}
 </style>
 </head>
 <body>
-<div class="card">
-<div class="welcome" id="welcome">👑 Star Sport Services ⭐</div>
-<div class="title">اختر الخدمة</div>
-<div class="divider">════════════════════</div>
-<div class="list">
-<a href="/renew" class="btn"><span class="icon">💳</span><span class="label">تجديد الاشتراك</span><span class="arrow">‹</span></a>
-<a href="/vodafone" class="btn"><span class="icon">💰</span><span class="label">رقم فودافون كاش</span><span class="arrow">‹</span></a>
-<a href="/remaining" class="btn"><span class="icon">⏳</span><span class="label">المتبقي في الاشتراك</span><span class="arrow">‹</span></a>
-<a href="/matches" class="btn"><span class="icon">⚽</span><span class="label">مباريات اليوم</span><span class="arrow">‹</span></a>
-<a href="/support" class="btn"><span class="icon">🛠️</span><span class="label">الدعم الفني</span><span class="arrow">‹</span></a>
+
+<!-- الشاشة الأولى: الترحيب -->
+<div class="hero" id="hero">
+<div class="logo">👑</div>
+<div class="brand">Star Sport Services</div>
+<div class="tagline">⭐ أفضل خدمة لعملائنا الكرام ⭐</div>
+
+<div class="box">
+<div class="welcome-title">👋 أهلاً وسهلاً بك</div>
+<div class="welcome-sub">اكتب بياناتك عشان نبدأ</div>
+
+<div class="field">
+<label>👤 اسمك</label>
+<input type="text" id="inName" placeholder="اكتب اسمك هنا" autocomplete="off">
 </div>
-<div class="divider">════════════════════</div>
-<div class="footer">© Star Sport Services 2026</div>
+
+<div class="field">
+<label>🔒 الرقم الظاهر في القناة المشفرة</label>
+<input type="text" id="inCard" placeholder="اكتب الرقم كامل" autocomplete="off">
+</div>
+
+<button class="btn-main" onclick="start()">ابدأ الآن 🚀</button>
+<div class="hint">💡 رقمك موجود تحت القناة المشفرة في الرسيفر</div>
+</div>
+</div>
+
+<!-- الشاشة الثانية: الخدمات -->
+<div class="services hidden" id="services">
+<div class="user-bar">
+<div class="hi">👋 أهلاً وسهلاً بك</div>
+<div class="name" id="userName">-</div>
+<div class="card-num" id="userCard">-</div>
+<div id="userStatus"></div>
+</div>
+
+<div class="services-title">اختر الخدمة المطلوبة</div>
+<div class="grid">
+<a href="/renew" class="tile primary">
+<span class="icon">💳</span>
+<span class="text"><span class="t">تجديد الاشتراك</span><span class="s">جدد اشتراكك بسهولة</span></span>
+<span class="arrow">‹</span>
+</a>
+<a href="/vodafone" class="tile">
+<span class="icon">💰</span>
+<span class="text"><span class="t">رقم فودافون كاش</span><span class="s">حوّل عليه المبلغ</span></span>
+<span class="arrow">‹</span>
+</a>
+<a href="/remaining" class="tile">
+<span class="icon">⏳</span>
+<span class="text"><span class="t">المتبقي في الاشتراك</span><span class="s">اعرف فاضل كام يوم</span></span>
+<span class="arrow">‹</span>
+</a>
+<a href="/matches" class="tile">
+<span class="icon">⚽</span>
+<span class="text"><span class="t">مباريات اليوم</span><span class="s">مواعيد المباريات والقنوات</span></span>
+<span class="arrow">‹</span>
+</a>
+<a href="/support" class="tile">
+<span class="icon">🛠️</span>
+<span class="text"><span class="t">الدعم الفني</span><span class="s">تواصل معنا</span></span>
+<span class="arrow">‹</span>
+</a>
+</div>
+
+<div class="footer">
+Star Sport Services © 2026
+<br>
+<a href="#" onclick="changeUser();return false;">تغيير الحساب</a>
+</div>
 </div>
 
 <script>
-// لو فيه رقم محفوظ، نجيبه ونسلم عليه
-var savedCard = localStorage.getItem('last_card');
-if (savedCard) {
-    fetch('/api/check-card', {
+function start() {
+    var name = document.getElementById('inName').value.trim();
+    var card = document.getElementById('inCard').value.trim();
+
+    if (!name) { alert('اكتب اسمك'); return; }
+    if (!card) { alert('اكتب الرقم المشفر'); return; }
+
+    // نحفظ في localStorage
+    localStorage.setItem('user_name', name);
+    localStorage.setItem('user_card', card);
+
+    // نسجل في الداتابيز
+    fetch('/api/register', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({card_number: savedCard})
-    }).then(function(r){ return r.json(); }).then(function(d){
-        if (d.ok && d.user.name) {
-            document.getElementById('welcome').innerHTML = '👋 أهلاً بيك يا ' + d.user.name;
-        }
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: name, card_number: card})
+    }).then(function() {
+        showServices(name, card);
+    }).catch(function() {
+        showServices(name, card);
     });
 }
+
+function showServices(name, card) {
+    document.getElementById('hero').classList.add('hidden');
+    document.getElementById('services').classList.remove('hidden');
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userCard').textContent = card;
+
+    // نجيب حالة الاشتراك
+    fetch('/api/check-card', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({card_number: card})
+    }).then(function(r){ return r.json(); }).then(function(d){
+        var el = document.getElementById('userStatus');
+        if (d.ok && d.user) {
+            if (d.user.status === 'active') {
+                el.innerHTML = '<span class="status-badge badge-active">✅ شغال — فاضل ' + d.user.days_left + ' يوم</span>';
+            } else {
+                el.innerHTML = '<span class="status-badge badge-expired">❌ الاشتراك منتهي</span>';
+            }
+        } else {
+            el.innerHTML = '<span class="status-badge badge-expired">⚠️ مشترك جديد</span>';
+        }
+    }).catch(function(){});
+}
+
+function changeUser() {
+    localStorage.removeItem('user_name');
+    localStorage.removeItem('user_card');
+    document.getElementById('hero').classList.remove('hidden');
+    document.getElementById('services').classList.add('hidden');
+    document.getElementById('inName').value = '';
+    document.getElementById('inCard').value = '';
+}
+
+// لو مستخدم مسجل قبل كده
+window.onload = function() {
+    var name = localStorage.getItem('user_name');
+    var card = localStorage.getItem('user_card');
+    if (name && card) {
+        showServices(name, card);
+    }
+};
 </script>
 </body>
 </html>
