@@ -3,53 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة التحكم — Star Sport</title>
+<title>لوحة التحكم</title>
 <style>
 *{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
-body{background:#f0f2f5;color:#222;padding-bottom:30px}
-header{background:linear-gradient(90deg,#0f2027,#2c5364);color:#fff;padding:18px 20px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
-header h1{margin:0;font-size:18px}
-header .info{font-size:12px;color:#ffd200;margin-top:4px}
-header .logout{float:left;color:#fff;text-decoration:none;font-size:13px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
-.tabs{display:flex;gap:4px;padding:12px;background:#fff;overflow-x:auto;border-bottom:1px solid #e0e0e0}
-.tab{padding:8px 14px;background:#f0f2f5;border-radius:8px;cursor:pointer;font-size:13px;font-weight:bold;white-space:nowrap;border:2px solid transparent;transition:.2s}
-.tab.active{background:linear-gradient(90deg,#f7971e,#ffd200);border-color:#f7971e;color:#222}
-.container{padding:14px;max-width:800px;margin:0 auto}
-.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
-.row{display:flex;justify-content:space-between;align-items:start;gap:8px;flex-wrap:wrap}
-.label{color:#666;font-size:12px}
-.value{font-weight:bold;color:#0f2027;font-size:14px;direction:ltr;text-align:left}
-.phone{font-size:16px;font-weight:bold;color:#0f2027;direction:ltr}
-.name{color:#444;font-size:13px;margin-top:3px}
+body{background:#0a1929;color:#fff;padding-bottom:30px;min-height:100vh}
+header{background:linear-gradient(90deg,#0f2027,#2c5364);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+header h1{margin:0;font-size:17px}
+header .info{font-size:11px;color:#ffd200;margin-top:3px}
+header .logout{color:#fff;text-decoration:none;font-size:12px;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:20px}
+.tabs{display:flex;gap:4px;padding:10px;overflow-x:auto;background:#0f2027}
+.tab{padding:8px 14px;background:rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;font-size:12px;font-weight:bold;white-space:nowrap;border:2px solid transparent;color:#a0b8c4;transition:.2s}
+.tab.active{background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027;border-color:#f7971e}
+.container{padding:14px;max-width:820px;margin:0 auto}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:12px}
+.label{color:#7a9bab;font-size:11px}
+.value{font-weight:bold;color:#fff;font-size:14px;direction:ltr}
+.phone{font-size:16px;font-weight:bold;color:#ffd200;direction:ltr}
+.name{color:#fff;font-size:14px;margin-top:3px}
 .badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:bold;white-space:nowrap}
-.pending{background:#fff3e0;color:#ef6c00}
-.approved{background:#e8f5e9;color:#2e7d32}
-.rejected{background:#ffebee;color:#c62828}
-.active-b{background:#e8f5e9;color:#2e7d32}
-.expired-b{background:#ffebee;color:#c62828}
+.pending{background:#5d4a00;color:#ffd200}
+.approved{background:#1b5e20;color:#a5d6a7}
+.rejected{background:#b71c1c;color:#ef9a9a}
+.active-b{background:#1b5e20;color:#a5d6a7}
+.expired-b{background:#b71c1c;color:#ef9a9a}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;transition:.2s}
+.btn{padding:9px 16px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;font-family:Tahoma}
 .btn-ok{background:#25D366;color:#fff}
-.btn-ok:hover{background:#1da851}
 .btn-no{background:#e53935;color:#fff}
-.btn-no:hover{background:#c62828}
 .btn-blue{background:#2c5364;color:#fff}
-.btn-gray{background:#999;color:#fff}
+.btn-gold{background:linear-gradient(90deg,#f7971e,#ffd200);color:#0f2027}
 .btn-sm{padding:6px 12px;font-size:12px}
 .img-box{margin-top:10px}
-.img-box img{max-width:100%;max-height:280px;border-radius:10px;border:2px solid #eee;cursor:pointer}
-.img-box a{color:#2c5364;text-decoration:none;font-size:13px;font-weight:bold}
-.money{background:#fff8e1;border-right:4px solid #ffb300;padding:10px;border-radius:8px;margin-top:10px}
-.money label{font-size:12px;color:#666;display:block;margin-bottom:4px}
-.money input{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:15px;font-family:Tahoma}
-.money input:focus{border-color:#2c5364;outline:none}
-.empty{text-align:center;color:#999;padding:40px;font-size:14px}
+.img-box img{max-width:100%;max-height:280px;border-radius:10px;border:2px solid rgba(255,255,255,0.1);cursor:pointer}
+.img-box a{color:#ffd200;text-decoration:none;font-size:13px;font-weight:bold}
+.money{background:rgba(255,210,0,0.1);border-right:3px solid #ffd200;padding:10px;border-radius:8px;margin-top:10px}
+.money label{font-size:12px;color:#ffd200;display:block;margin-bottom:4px}
+.money input{width:100%;padding:10px;border:2px solid rgba(255,210,0,0.3);background:rgba(0,0,0,0.3);color:#fff;border-radius:8px;font-size:15px;font-family:Tahoma}
+.money input:focus{border-color:#ffd200;outline:none}
+.empty{text-align:center;color:#5a7a8a;padding:40px;font-size:13px}
 .hidden{display:none}
-input[type=text],input[type=tel],input[type=date]{width:100%;padding:11px;border:2px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
-input:focus{border-color:#2c5364;outline:none}
-.add-form{background:#f9f9f9;border-radius:12px;padding:16px;margin-bottom:16px;border:2px dashed #ddd}
-.add-form h3{margin-bottom:12px;color:#0f2027;font-size:15px}
-.file-info{font-size:11px;color:#888;margin-top:4px}
+input[type=text],input[type=tel],input[type=date],input[type=number],textarea{width:100%;padding:11px;border:2px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.3);color:#fff;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
+input:focus,textarea:focus{border-color:#ffd200;outline:none}
+textarea{min-height:70px;resize:vertical}
+.add-form{background:rgba(255,255,255,0.03);border:2px dashed rgba(255,210,0,0.3);border-radius:12px;padding:16px;margin-bottom:16px}
+.add-form h3{margin-bottom:12px;color:#ffd200;font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:start;gap:8px;flex-wrap:wrap}
+.stat-box{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;text-align:center}
+.stat .num{font-size:26px;font-weight:bold;color:#ffd200;margin-bottom:4px}
+.stat .lbl{font-size:11px;color:#7a9bab}
+.channel-icon{font-size:32px;margin-left:8px}
 </style>
 </head>
 <body>
@@ -65,6 +68,7 @@ input:focus{border-color:#2c5364;outline:none}
 <div class="tabs">
 <div class="tab active" onclick="tab('requests',this)">📥 الطلبات</div>
 <div class="tab" onclick="tab('users',this)">👥 المشتركين</div>
+<div class="tab" onclick="tab('channels',this)">📺 القنوات</div>
 <div class="tab" onclick="tab('messages',this)">📩 الدعم</div>
 <div class="tab" onclick="tab('matches',this)">⚽ المباريات</div>
 <div class="tab" onclick="tab('stats',this)">📊 إحصائيات</div>
@@ -73,6 +77,7 @@ input:focus{border-color:#2c5364;outline:none}
 <div class="container">
 <div id="requestsView"></div>
 <div id="usersView" class="hidden"></div>
+<div id="channelsView" class="hidden"></div>
 <div id="messagesView" class="hidden"></div>
 <div id="matchesView" class="hidden"></div>
 <div id="statsView" class="hidden"></div>
@@ -88,20 +93,14 @@ async function loadRequests() {
     const b = document.getElementById('requestsView');
     if (!d.length) { b.innerHTML = '<div class="empty">مفيش طلبات</div>'; return; }
     b.innerHTML = d.map(function(x) {
-        var img = '';
-        if (x.screenshot) {
-            img = '<div class="img-box"><a href="/uploads/' + x.screenshot + '" target="_blank">📷 عرض صورة التحويل</a><br><img src="/uploads/' + x.screenshot + '" onclick="window.open(this.src)"></div>';
-        }
+        var img = x.screenshot ? '<div class="img-box"><a href="/uploads/' + x.screenshot + '" target="_blank">📷 عرض صورة التحويل</a><br><img src="/uploads/' + x.screenshot + '" onclick="window.open(this.src)"></div>' : '';
         var money = '';
         if (x.status === 'pending' && ROLE === 'super_admin') {
             money = '<div class="money"><label>💰 المبلغ المحوّل:</label><input type="number" id="amt_' + x.id + '" placeholder="اكتب المبلغ" value="' + (x.amount || '') + '"></div>';
         } else if (x.amount) {
-            money = '<div class="money"><label>💰 المبلغ:</label><b>' + x.amount + ' جنيه</b></div>';
+            money = '<div class="money"><label>💰 المبلغ:</label><b style="color:#fff;font-size:16px">' + x.amount + ' جنيه</b></div>';
         }
-        var actions = '';
-        if (x.status === 'pending' && ROLE === 'super_admin') {
-            actions = '<div class="actions"><button class="btn btn-ok" onclick="handle(' + x.id + ', \'approve\')">✅ موافقة</button><button class="btn btn-no" onclick="handle(' + x.id + ', \'reject\')">❌ رفض</button></div>';
-        }
+        var actions = (x.status === 'pending' && ROLE === 'super_admin') ? '<div class="actions"><button class="btn btn-ok" onclick="handle(' + x.id + ', \'approve\')">✅ موافقة</button><button class="btn btn-no" onclick="handle(' + x.id + ', \'reject\')">❌ رفض</button></div>' : '';
         var stTxt = x.status === 'pending' ? '⏳ معلق' : (x.status === 'approved' ? '✅ تم' : '❌ مرفوض');
         return '<div class="card">' +
             '<div class="row">' +
@@ -111,11 +110,10 @@ async function loadRequests() {
             '<div class="name">' + (x.name || 'مشترك جديد') + '</div>' +
             '<div style="margin-top:8px"><span class="label">المدة:</span> <b>' + x.months + ' شهر</b></div>' +
             '<div><span class="label">حوّل من:</span> <b style="direction:ltr">' + (x.from_phone || '-') + '</b></div>' +
-            '<div class="file-info">' + x.created_at + '</div>' +
+            '<div class="label" style="margin-top:6px">' + x.created_at + '</div>' +
             '</div>' +
             '<span class="badge ' + x.status + '">' + stTxt + '</span>' +
-            '</div>' +
-            img + money + actions +
+            '</div>' + img + money + actions +
             '</div>';
     }).join('');
 }
@@ -128,11 +126,9 @@ async function handle(id, action) {
         if (!amt) { alert('اكتب المبلغ الأول'); return; }
     }
     if (!confirm('متأكد؟')) return;
-    var body = {id: id, action: action, amount: amt};
     var r = await fetch('/api/admin/handle', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id, action: action, amount: amt})
     });
     var d = await r.json();
     if (!d.ok) return alert(d.msg || 'خطأ');
@@ -144,16 +140,13 @@ async function loadUsers() {
     const r = await fetch('/api/admin/users');
     const d = await r.json();
     const b = document.getElementById('usersView');
-    var form = '<div class="add-form"><h3>➕ إضافة مشترك جديد</h3>' +
+    var form = '<div class="add-form"><h3>➕ إضافة مشترك</h3>' +
         '<input type="text" id="nu_card" placeholder="الرقم المشفر">' +
         '<input type="text" id="nu_name" placeholder="الاسم">' +
         '<input type="tel" id="nu_phone" placeholder="رقم الموبايل">' +
-        '<input type="date" id="nu_expiry" placeholder="تاريخ الانتهاء">' +
-        '<button class="btn btn-blue" onclick="addUser()" style="width:100%;margin-top:6px">إضافة</button></div>';
-    if (!d.length) {
-        b.innerHTML = form + '<div class="empty">مفيش مشتركين</div>';
-        return;
-    }
+        '<input type="date" id="nu_expiry">' +
+        '<button class="btn btn-gold" onclick="addUser()" style="width:100%">إضافة المشترك</button></div>';
+    if (!d.length) { b.innerHTML = form + '<div class="empty">مفيش مشتركين</div>'; return; }
     var list = d.map(function(u) {
         var st = u.status === 'active' ? '✅ شغال' : '❌ منتهي';
         var stc = u.status === 'active' ? 'active-b' : 'expired-b';
@@ -171,8 +164,7 @@ async function loadUsers() {
             '<div class="actions">' +
             '<button class="btn btn-blue btn-sm" onclick="editUser(\'' + u.card_number + '\',\'' + (u.name || '') + '\',\'' + (u.phone || '') + '\',\'' + u.expiry + '\')">✏️ تعديل</button>' +
             '<button class="btn btn-no btn-sm" onclick="delUser(\'' + u.card_number + '\')">🗑️ حذف</button>' +
-            '</div>' +
-            '</div>';
+            '</div></div>';
     }).join('');
     b.innerHTML = form + list;
 }
@@ -186,8 +178,7 @@ async function addUser() {
     };
     if (!d.card_number) return alert('اكتب الرقم المشفر');
     var r = await fetch('/api/admin/add_user', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(d)
     });
     var res = await r.json();
@@ -197,29 +188,88 @@ async function addUser() {
 }
 
 async function editUser(card, name, phone, expiry) {
-    var n = prompt('الاسم:', name);
-    if (n === null) return;
-    var p = prompt('رقم الموبايل:', phone);
-    if (p === null) return;
-    var e = prompt('تاريخ الانتهاء (YYYY-MM-DD):', expiry);
-    if (e === null) return;
+    var n = prompt('الاسم:', name); if (n === null) return;
+    var p = prompt('رقم الموبايل:', phone); if (p === null) return;
+    var e = prompt('تاريخ الانتهاء (YYYY-MM-DD):', expiry); if (e === null) return;
     var r = await fetch('/api/admin/edit_user', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({card_number: card, name: n, phone: p, expiry: e})
     });
     var res = await r.json();
     if (!res.ok) return alert(res.msg || 'خطأ');
-    alert('تم التعديل');
     loadUsers();
 }
 
 async function delUser(card) {
     if (!confirm('حذف المشترك؟')) return;
-    var r = await fetch('/api/admin/del_user/' + card, {method: 'DELETE'});
+    await fetch('/api/admin/del_user/' + card, {method: 'DELETE'});
+    loadUsers();
+}
+
+/* ===== القنوات ===== */
+async function loadChannels() {
+    const r = await fetch('/api/admin/channels');
+    const d = await r.json();
+    const b = document.getElementById('channelsView');
+    var form = '<div class="add-form"><h3>➕ إضافة قناة</h3>' +
+        '<input type="text" id="ch_icon" placeholder="رمز (مثال: 📺 أو ⚽)" value="📺">' +
+        '<input type="text" id="ch_name" placeholder="اسم القناة">' +
+        '<input type="number" id="ch_price" placeholder="السعر (اختياري)">' +
+        '<textarea id="ch_problem" placeholder="المشاكل / الملاحظات (اختياري)"></textarea>' +
+        '<button class="btn btn-gold" onclick="addChannel()" style="width:100%">إضافة القناة</button></div>';
+    if (!d.length) { b.innerHTML = form + '<div class="empty">مفيش قنوات</div>'; return; }
+    var list = d.map(function(c) {
+        return '<div class="card">' +
+            '<div class="row">' +
+            '<div style="flex:1">' +
+            '<div class="phone"><span class="channel-icon">' + (c.icon || '📺') + '</span> ' + c.name + '</div>' +
+            (c.price ? '<div><span class="label">السعر:</span> <b>' + c.price + ' جنيه</b></div>' : '') +
+            (c.problem ? '<div style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:13px;color:#a0b8c4">' + c.problem + '</div>' : '') +
+            '</div>' +
+            '</div>' +
+            '<div class="actions">' +
+            '<button class="btn btn-blue btn-sm" onclick="editChannel(' + c.id + ',\'' + (c.icon || '📺') + '\',\'' + c.name.replace(/'/g,"\\'") + '\',' + c.price + ',\'' + (c.problem || '').replace(/'/g,"\\'").replace(/\n/g,' ') + '\')">✏️ تعديل</button>' +
+            '<button class="btn btn-no btn-sm" onclick="delChannel(' + c.id + ')">🗑️ حذف</button>' +
+            '</div></div>';
+    }).join('');
+    b.innerHTML = form + list;
+}
+
+async function addChannel() {
+    var d = {
+        icon: document.getElementById('ch_icon').value.trim() || '📺',
+        name: document.getElementById('ch_name').value.trim(),
+        price: document.getElementById('ch_price').value,
+        problem: document.getElementById('ch_problem').value.trim()
+    };
+    if (!d.name) return alert('اكتب اسم القناة');
+    var r = await fetch('/api/admin/add_channel', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(d)
+    });
     var res = await r.json();
     if (!res.ok) return alert(res.msg || 'خطأ');
-    loadUsers();
+    loadChannels();
+}
+
+async function editChannel(id, icon, name, price, problem) {
+    var n = prompt('اسم القناة:', name); if (n === null) return;
+    var p = prompt('السعر:', price); if (p === null) return;
+    var pb = prompt('المشاكل:', problem); if (pb === null) return;
+    var ic = prompt('الرمز:', icon); if (ic === null) return;
+    var r = await fetch('/api/admin/edit_channel', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id, name: n, price: p, problem: pb, icon: ic})
+    });
+    var res = await r.json();
+    if (!res.ok) return alert(res.msg || 'خطأ');
+    loadChannels();
+}
+
+async function delChannel(id) {
+    if (!confirm('حذف القناة؟')) return;
+    await fetch('/api/admin/del_channel/' + id, {method: 'DELETE'});
+    loadChannels();
 }
 
 /* ===== الرسائل ===== */
@@ -232,8 +282,8 @@ async function loadMessages() {
         return '<div class="card">' +
             '<div class="phone">' + x.phone + '</div>' +
             '<div class="name">' + (x.name || '-') + '</div>' +
-            '<div class="file-info">' + x.created_at + '</div>' +
-            '<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:8px;font-size:14px;line-height:1.7">' + x.message + '</div>' +
+            '<div class="label" style="margin-top:4px">' + x.created_at + '</div>' +
+            '<div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:14px;line-height:1.7">' + x.message + '</div>' +
             '</div>';
     }).join('');
 }
@@ -250,13 +300,13 @@ async function loadMatches() {
         '<input type="text" id="m_channel" placeholder="القناة">' +
         '<input type="text" id="m_league" placeholder="الدوري">' +
         '<input type="date" id="m_date">' +
-        '<button class="btn btn-blue" onclick="addMatch()" style="width:100%;margin-top:6px">إضافة</button></div>';
+        '<button class="btn btn-gold" onclick="addMatch()" style="width:100%">إضافة المباراة</button></div>';
     if (!d.length) { b.innerHTML = form + '<div class="empty">مفيش مباريات</div>'; return; }
     var list = d.map(function(m) {
         return '<div class="card"><div class="row">' +
             '<div><div class="phone">' + m.home + ' × ' + m.away + '</div>' +
             '<div class="name">' + m.time + ' — ' + m.channel + '</div>' +
-            '<div class="file-info">' + m.league + ' | ' + m.date + '</div></div>' +
+            '<div class="label">' + m.league + ' | ' + m.date + '</div></div>' +
             '<button class="btn btn-no btn-sm" onclick="delMatch(' + m.id + ')">🗑️</button>' +
             '</div></div>';
     }).join('');
@@ -273,13 +323,10 @@ async function addMatch() {
         date: document.getElementById('m_date').value
     };
     if (!d.home || !d.away) return alert('اكتب أسماء الفرق');
-    var r = await fetch('/api/admin/add_match', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+    await fetch('/api/admin/add_match', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(d)
     });
-    var res = await r.json();
-    if (!res.ok) return alert('خطأ');
     loadMatches();
 }
 
@@ -294,12 +341,13 @@ async function loadStats() {
     var r = await fetch('/api/admin/stats');
     var d = await r.json();
     var b = document.getElementById('statsView');
-    b.innerHTML = '<div class="card"><h3 style="margin-bottom:12px">📊 إحصائيات</h3>' +
-        '<div class="row"><span class="label">إجمالي المشتركين:</span><b>' + (d.users || 0) + '</b></div>' +
-        '<div class="row"><span class="label">المشتركين النشطين:</span><b>' + (d.active || 0) + '</b></div>' +
-        '<div class="row"><span class="label">طلبات معلقة:</span><b>' + (d.pending || 0) + '</b></div>' +
-        '<div class="row"><span class="label">إجمالي المبالغ:</span><b>' + (d.total_money || 0) + ' جنيه</b></div>' +
-        '<div class="row"><span class="label">رسائل جديدة:</span><b>' + (d.messages || 0) + '</b></div>' +
+    b.innerHTML = '<div class="stat-box">' +
+        '<div class="stat"><div class="num">' + (d.users || 0) + '</div><div class="lbl">مشتركين</div></div>' +
+        '<div class="stat"><div class="num">' + (d.active || 0) + '</div><div class="lbl">نشطين</div></div>' +
+        '<div class="stat"><div class="num">' + (d.pending || 0) + '</div><div class="lbl">طلبات معلقة</div></div>' +
+        '<div class="stat"><div class="num">' + (d.total_money || 0) + '</div><div class="lbl">إجمالي المبالغ</div></div>' +
+        '<div class="stat"><div class="num">' + (d.messages || 0) + '</div><div class="lbl">رسائل جديدة</div></div>' +
+        '<div class="stat"><div class="num">' + (d.channels || 0) + '</div><div class="lbl">قنوات</div></div>' +
         '</div>';
 }
 
@@ -307,12 +355,13 @@ async function loadStats() {
 function tab(t, el) {
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
     el.classList.add('active');
-    ['requests','users','messages','matches','stats'].forEach(function(v){
+    ['requests','users','channels','messages','matches','stats'].forEach(function(v){
         document.getElementById(v+'View').classList.add('hidden');
     });
     document.getElementById(t+'View').classList.remove('hidden');
     if (t === 'requests') loadRequests();
     if (t === 'users') loadUsers();
+    if (t === 'channels') loadChannels();
     if (t === 'messages') loadMessages();
     if (t === 'matches') loadMatches();
     if (t === 'stats') loadStats();
