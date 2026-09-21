@@ -1,135 +1,182 @@
-cat > templates/admin.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الأدمن — استار سبورت</title>
+<title>لوحة الأدمن</title>
 <style>
-  * { box-sizing:border-box; font-family:'Tahoma', sans-serif; }
-  body { margin:0; background:#f4f6f9; color:#222; }
-  header { background:linear-gradient(90deg,#0f2027,#2c5364); color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; }
-  header h1 { margin:0; font-size:20px; }
-  header .info { font-size:13px; color:#ffd200; }
-  header a { color:#fff; text-decoration:none; font-size:14px; }
-  .container { padding:20px; max-width:900px; margin:0 auto; }
-  .tabs { display:flex; gap:8px; margin-bottom:16px; }
-  .tab { padding:10px 20px; background:#fff; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px; border:2px solid transparent; }
-  .tab.active { border-color:#2c5364; color:#2c5364; }
-  .card { background:#fff; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .row { display:flex; justify-content:space-between; align-items:center; }
-  .phone { font-size:17px; font-weight:bold; color:#0f2027; direction:ltr; }
-  .name { color:#666; font-size:14px; margin-top:4px; }
-  .meta { font-size:13px; color:#888; margin-top:6px; }
-  .badge { padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; }
-  .pending { background:#fff3e0; color:#ef6c00; }
-  .approved { background:#e8f5e9; color:#2e7d32; }
-  .rejected { background:#ffebee; color:#c62828; }
-  .active-b { background:#e8f5e9; color:#2e7d32; }
-  .expired-b { background:#ffebee; color:#c62828; }
-  .actions { display:flex; gap:8px; margin-top:10px; }
-  .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px; }
-  .btn-ok { background:#25D366; color:#fff; }
-  .btn-no { background:#e53935; color:#fff; }
-  .empty { text-align:center; color:#999; padding:40px; }
-  .hidden { display:none; }
+*{box-sizing:border-box;font-family:Tahoma;margin:0;padding:0}
+body{background:#f4f6f9;color:#222}
+header{background:linear-gradient(90deg,#0f2027,#2c5364);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:18px}
+header .info{font-size:13px;color:#ffd200}
+header a{color:#fff;text-decoration:none;font-size:14px}
+.tabs{display:flex;gap:6px;padding:12px;background:#fff;overflow-x:auto}
+.tab{padding:8px 14px;background:#f0f4ff;border-radius:8px;cursor:pointer;font-size:13px;font-weight:bold;white-space:nowrap;border:2px solid transparent}
+.tab.active{border-color:#2c5364;color:#2c5364}
+.container{padding:14px;max-width:800px;margin:0 auto}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.phone{font-size:16px;font-weight:bold;color:#0f2027;direction:ltr}
+.name{color:#666;font-size:13px;margin-top:4px}
+.meta{font-size:12px;color:#888;margin-top:5px}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold}
+.pending{background:#fff3e0;color:#ef6c00}
+.approved{background:#e8f5e9;color:#2e7d32}
+.rejected{background:#ffebee;color:#c62828}
+.active-b{background:#e8f5e9;color:#2e7d32}
+.expired-b{background:#ffebee;color:#c62828}
+.new-b{background:#e3f2fd;color:#1565c0}
+.row{display:flex;justify-content:space-between;align-items:start;gap:8px}
+.actions{display:flex;gap:6px;margin-top:10px}
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px}
+.btn-ok{background:#25D366;color:#fff}
+.btn-no{background:#e53935;color:#fff}
+.btn-add{background:#2c5364;color:#fff;padding:10px 16px;font-size:14px}
+.empty{text-align:center;color:#999;padding:30px}
+.hidden{display:none}
+input,select,textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;font-family:Tahoma}
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>🏆 لوحة تحكم استار سبورت</h1>
-    <div class="info">أهلاً {{ admin_name }} — {{ admin_role }}</div>
-  </div>
-  <a href="/admin/logout">خروج</a>
+<div>
+<h1>🏆 لوحة تحكم استار سبورت</h1>
+<div class="info">أهلاً {{ admin_name }} — {{ admin_role }}</div>
+</div>
+<a href="/admin/logout">خروج</a>
 </header>
 
+<div class="tabs">
+<div class="tab active" onclick="switchTab('requests',this)">📥 طلبات</div>
+<div class="tab" onclick="switchTab('messages',this)">📩 رسائل</div>
+<div class="tab" onclick="switchTab('users',this)">👥 مشتركين</div>
+<div class="tab" onclick="switchTab('matches',this)">⚽ مباريات</div>
+</div>
+
 <div class="container">
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('requests', this)">📥 طلبات التجديد</div>
-    <div class="tab" onclick="switchTab('users', this)">👥 المشتركين</div>
-  </div>
-  <div id="requestsView"></div>
-  <div id="usersView" class="hidden"></div>
+<div id="requestsView"></div>
+<div id="messagesView" class="hidden"></div>
+<div id="usersView" class="hidden"></div>
+<div id="matchesView" class="hidden"></div>
 </div>
 
 <script>
-const ROLE = "{{ admin_role }}";
+const ROLE="{{ admin_role }}";
 
-async function loadRequests() {
-  const res = await fetch('/api/admin/requests');
-  const reqs = await res.json();
-  const box = document.getElementById('requestsView');
-  if (!reqs.length) { box.innerHTML = '<div class="empty">مفيش طلبات حالياً</div>'; return; }
-  box.innerHTML = reqs.map(r => `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="phone">${r.phone}</div>
-          <div class="name">${r.name || '-'}</div>
-          <div class="meta">المدة: ${r.months} شهر — ${r.created_at}</div>
-          ${r.handled_by ? `<div class="meta">تم بواسطة: ${r.handled_by}</div>` : ''}
-        </div>
-        <span class="badge ${r.status}">${r.status==='pending'?'⏳ معلق':r.status==='approved'?'✅ تم':'❌ مرفوض'}</span>
-      </div>
-      ${r.status === 'pending' && ROLE === 'super_admin' ? `
-        <div class="actions">
-          <button class="btn btn-ok" onclick="handle(${r.id}, 'approve')">✅ موافقة</button>
-          <button class="btn btn-no" onclick="handle(${r.id}, 'reject')">❌ رفض</button>
-        </div>` : ''}
-    </div>
-  `).join('');
+async function loadRequests(){
+const r=await fetch('/api/admin/requests');const d=await r.json();
+const b=document.getElementById('requestsView');
+if(!d.length){b.innerHTML='<div class="empty">مفيش طلبات</div>';return}
+b.innerHTML=d.map(x=>`<div class="card">
+<div class="row">
+<div>
+<div class="phone">${x.phone}</div>
+<div class="name">${x.name||'-'}</div>
+<div class="meta">${x.months} شهر — ${x.created_at}</div>
+${x.handled_by?'<div class="meta">بواسطة: '+x.handled_by+'</div>':''}
+</div>
+<span class="badge ${x.status}">${x.status==='pending'?'⏳ معلق':x.status==='approved'?'✅ تم':'❌ مرفوض'}</span>
+</div>
+${x.status==='pending'&&ROLE==='super_admin'?`<div class="actions">
+<button class="btn btn-ok" onclick="handle(${x.id},'approve')">✅ موافقة</button>
+<button class="btn btn-no" onclick="handle(${x.id},'reject')">❌ رفض</button>
+</div>`:''}
+</div>`).join('');
 }
 
-async function handle(id, action) {
-  if (!confirm('متأكد؟')) return;
-  const res = await fetch('/api/admin/handle', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({id, action})
-  });
-  const data = await res.json();
-  if (!data.ok) return alert(data.msg || 'خطأ');
-  loadRequests();
+async function loadMessages(){
+const r=await fetch('/api/admin/messages');const d=await r.json();
+const b=document.getElementById('messagesView');
+if(!d.length){b.innerHTML='<div class="empty">مفيش رسائل</div>';return}
+b.innerHTML=d.map(x=>`<div class="card">
+<div class="row">
+<div>
+<div class="phone">${x.phone}</div>
+<div class="name">${x.name||'-'}</div>
+<div class="meta">${x.created_at}</div>
+</div>
+<span class="badge new-b">جديد</span>
+</div>
+<div style="margin-top:10px;padding:10px;background:#f9f9f9;border-radius:8px;font-size:14px;line-height:1.7">${x.message}</div>
+</div>`).join('');
 }
 
-async function loadUsers() {
-  const res = await fetch('/api/admin/users');
-  const users = await res.json();
-  const box = document.getElementById('usersView');
-  if (!users.length) { box.innerHTML = '<div class="empty">مفيش مشتركين</div>'; return; }
-  box.innerHTML = users.map(u => `
-    <div class="card">
-      <div class="row">
-        <div>
-          <div class="phone">${u.phone}</div>
-          <div class="name">${u.name || '-'}</div>
-          <div class="meta">ينتهي: ${u.expiry} — فاضل ${u.days_left} يوم</div>
-        </div>
-        <span class="badge ${u.status==='active'?'active-b':'expired-b'}">${u.status==='active'?'✅ شغال':'❌ منتهي'}</span>
-      </div>
-    </div>
-  `).join('');
+async function loadUsers(){
+const r=await fetch('/api/admin/users');const d=await r.json();
+const b=document.getElementById('usersView');
+if(!d.length){b.innerHTML='<div class="empty">مفيش مشتركين</div>';return}
+b.innerHTML=d.map(u=>`<div class="card">
+<div class="row">
+<div>
+<div class="phone">${u.phone}</div>
+<div class="name">${u.name||'-'}</div>
+<div class="meta">ينتهي: ${u.expiry} — فاضل ${u.days_left} يوم</div>
+</div>
+<span class="badge ${u.status==='active'?'active-b':'expired-b'}">${u.status==='active'?'✅ شغال':'❌ منتهي'}</span>
+</div>
+</div>`).join('');
 }
 
-function switchTab(tab, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  if (tab === 'requests') {
-    document.getElementById('requestsView').classList.remove('hidden');
-    document.getElementById('usersView').classList.add('hidden');
-    loadRequests();
-  } else {
-    document.getElementById('requestsView').classList.add('hidden');
-    document.getElementById('usersView').classList.remove('hidden');
-    loadUsers();
-  }
+async function loadMatches(){
+const r=await fetch('/api/admin/matches');const d=await r.json();
+const b=document.getElementById('matchesView');
+b.innerHTML=`<div class="card">
+<h3 style="margin-bottom:10px">➕ إضافة مباراة</h3>
+<input id="mh" placeholder="الفريق الأول">
+<input id="ma" placeholder="الفريق الثاني">
+<input id="mt" placeholder="الوقت (مثال: 21:00)">
+<input id="mc" placeholder="القناة">
+<input id="ml" placeholder="الدوري">
+<button class="btn btn-add" onclick="addMatch()">إضافة</button>
+</div>`+(d.length?d.map(m=>`<div class="card">
+<div class="row">
+<div>
+<div class="phone">${m.home} × ${m.away}</div>
+<div class="meta">${m.time} — ${m.channel}</div>
+<div class="meta">${m.league}</div>
+</div>
+<button class="btn btn-no" onclick="delMatch(${m.id})">🗑️</button>
+</div>
+</div>`).join(''):'<div class="empty">مفيش مباريات</div>');
+}
+
+async function handle(id,a){
+if(!confirm('متأكد؟'))return;
+const r=await fetch('/api/admin/handle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,action:a})});
+const d=await r.json();
+if(!d.ok)return alert(d.msg||'خطأ');
+loadRequests();
+}
+
+async function addMatch(){
+const body={home:mh.value,away:ma.value,time:mt.value,channel:mc.value,league:ml.value};
+if(!body.home||!body.away)return alert('اكمل البيانات');
+await fetch('/api/admin/add_match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+loadMatches();
+}
+
+async function delMatch(id){
+if(!confirm('حذف؟'))return;
+await fetch('/api/admin/del_match/'+id,{method:'DELETE'});
+loadMatches();
+}
+
+function switchTab(t,el){
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+el.classList.add('active');
+['requests','messages','users','matches'].forEach(v=>{
+document.getElementById(v+'View').classList.add('hidden');
+});
+document.getElementById(t+'View').classList.remove('hidden');
+if(t==='requests')loadRequests();
+if(t==='messages')loadMessages();
+if(t==='users')loadUsers();
+if(t==='matches')loadMatches();
 }
 
 loadRequests();
-setInterval(loadRequests, 30000);
+setInterval(loadRequests,30000);
 </script>
 </body>
 </html>
-ENDOFFILE
