@@ -7,36 +7,49 @@
 <style>
 *{box-sizing:border-box;font-family:Tahoma,sans-serif;margin:0;padding:0}
 body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);min-height:100vh;padding:20px;color:#fff;display:flex;align-items:center;justify-content:center}
-.card{background:#1a1a1a;border:2px solid #ffd200;border-radius:18px;padding:24px 18px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(255,210,0,0.2)}
-.title{text-align:center;font-size:22px;font-weight:bold;color:#ffd200;margin-bottom:6px}
-.divider{text-align:center;color:#ffd200;margin:14px 0;letter-spacing:1px;opacity:0.5;font-size:13px}
-.list{display:flex;flex-direction:column;gap:12px;margin:16px 0}
-.btn{background:#fff;color:#0f2027;border-radius:12px;padding:16px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;font-weight:bold;font-size:16px;transition:all .15s;box-shadow:0 4px 12px rgba(0,0,0,0.25);border:2px solid transparent}
+.card{background:#1a1a1a;border:2px solid #ffd200;border-radius:20px;padding:24px 18px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(255,210,0,0.2)}
+.welcome{text-align:center;margin-bottom:8px;font-size:16px;color:#ffd200;font-weight:bold}
+.title{text-align:center;font-size:22px;font-weight:bold;color:#fff;margin-bottom:4px}
+.divider{text-align:center;color:#ffd200;margin:16px 0;letter-spacing:2px;opacity:0.4;font-size:12px}
+.list{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.btn{background:#fff;color:#0f2027;border-radius:12px;padding:15px 18px;text-decoration:none;display:flex;align-items:center;gap:14px;font-weight:bold;font-size:15px;transition:.15s;box-shadow:0 3px 10px rgba(0,0,0,0.25)}
 .btn:active{transform:scale(.97);background:#ffd200}
-.btn .icon{font-size:26px;flex-shrink:0}
+.btn .icon{font-size:24px}
 .btn .label{flex:1;text-align:right}
 .btn .arrow{color:#888;font-size:18px}
-.footer{text-align:center;color:#ffd200;font-size:13px;margin-top:14px}
-.footer .small{color:#888;font-size:11px;margin-top:6px}
+.footer{text-align:center;color:#888;font-size:12px;margin-top:14px}
 </style>
 </head>
 <body>
 <div class="card">
-<div class="title">👑 Star Sport Services ⭐</div>
-<div class="divider">═════════════════════</div>
+<div class="welcome" id="welcome">👑 Star Sport Services ⭐</div>
+<div class="title">اختر الخدمة</div>
+<div class="divider">════════════════════</div>
 <div class="list">
 <a href="/renew" class="btn"><span class="icon">💳</span><span class="label">تجديد الاشتراك</span><span class="arrow">‹</span></a>
 <a href="/vodafone" class="btn"><span class="icon">💰</span><span class="label">رقم فودافون كاش</span><span class="arrow">‹</span></a>
 <a href="/remaining" class="btn"><span class="icon">⏳</span><span class="label">المتبقي في الاشتراك</span><span class="arrow">‹</span></a>
 <a href="/matches" class="btn"><span class="icon">⚽</span><span class="label">مباريات اليوم</span><span class="arrow">‹</span></a>
-<a href="/azkar" class="btn"><span class="icon">📿</span><span class="label">أذكار اليوم</span><span class="arrow">‹</span></a>
-<a href="/quran" class="btn"><span class="icon">📖</span><span class="label">آية قرآنية</span><span class="arrow">‹</span></a>
-<a href="/prayer" class="btn"><span class="icon">🕋</span><span class="label">مواقيت الصلاة</span><span class="arrow">‹</span></a>
 <a href="/support" class="btn"><span class="icon">🛠️</span><span class="label">الدعم الفني</span><span class="arrow">‹</span></a>
 </div>
-<div class="divider">═════════════════════</div>
-<div class="footer">💬 اضغط على الخدمة المطلوبة</div>
-<div class="footer small">© Star Sport Services 2026</div>
+<div class="divider">════════════════════</div>
+<div class="footer">© Star Sport Services 2026</div>
 </div>
+
+<script>
+// لو فيه رقم محفوظ، نجيبه ونسلم عليه
+var savedCard = localStorage.getItem('last_card');
+if (savedCard) {
+    fetch('/api/check-card', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({card_number: savedCard})
+    }).then(function(r){ return r.json(); }).then(function(d){
+        if (d.ok && d.user.name) {
+            document.getElementById('welcome').innerHTML = '👋 أهلاً بيك يا ' + d.user.name;
+        }
+    });
+}
+</script>
 </body>
 </html>
