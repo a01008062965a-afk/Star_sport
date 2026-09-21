@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-import os, json, urllib.request, urllib.parse
+import os, json, urllib.request, urllib.parse, random
 
 app = Flask(__name__)
 app.secret_key = "starsport-2026-secret"
@@ -30,20 +30,21 @@ def load_json(fname, default):
 
 
 def send_whatsapp(msg):
-    """إرسال إشعار واتساب — باستخدام CallMeBot"""
     try:
         api_key = "YOUR_CALLMEBOT_KEY"
+        if api_key == "YOUR_CALLMEBOT_KEY":
+            return
         text = urllib.parse.quote(msg)
         url = f"https://api.callmebot.com/whatsapp.php?phone={WHATSAPP_NUMBER}&text={text}&apikey={api_key}"
         urllib.request.urlopen(url, timeout=5)
     except Exception as e:
-        print("WhatsApp error:", e)
+        print("WA error:", e)
 
 
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    phone = db.Column(db.String(20), unique=True)
+    phone = db.Column(db.String(20))
     card_number = db.Column(db.String(100), unique=True)
     name = db.Column(db.String(100))
     expiry = db.Column(db.Date)
@@ -191,14 +192,17 @@ def api_renew():
     months = int(request.form.get('months', 1))
     from_phone = request.form.get('from_phone', '').strip()
 
-    u = User.query.filter_by(card_number=card).first()
-    if not u:
-        return jsonify({'ok': False, 'msg': 'الرقم غير مسجل'}), 404
+    if not card or not from_phone:
+        return jsonify({'ok': False, 'msg': 'اكمل البيانات'}), 400
 
     # منع تكرار الطلب
     existing = RenewalRequest.query.filter_by(card_number=card, status='pending').first()
     if existing:
         return jsonify({'ok': False, 'msg': 'فيه طلب معلق بالفعل — استنى الموافقة'}), 400
+
+    # نجيب الاسم من الداتابيز لو موجود
+    u = User.query.filter_by(card_number=card).first()
+    name = u.name if u else ''
 
     fn = None
     if 'screenshot' in request.files:
@@ -210,15 +214,14 @@ def api_renew():
                 f.save(os.path.join(app.config['UPLOAD_FOLDER'], fn))
 
     req = RenewalRequest(
-        phone=u.phone, card_number=card, name=u.name,
-        months=months, from_phone=from_phone, screenshot=fn
+        phone=u.phone if u else from_phone,
+        card_number=card, name=name, months=months,
+        from_phone=from_phone, screenshot=fn
     )
     db.session.add(req)
     db.session.commit()
 
-    # إشعار واتساب
-    msg = f"طلب تجديد جديد\nالاسم: {u.name}\nالرقم المشفر: {card}\nالمدة: {months} شهر\nالرقم اللي حوّل منه: {from_phone}"
-    send_whatsapp(msg)
+    send_whatsapp(f"طلب تجديد جديد\nالرقم المشفر: {card}\nالمدة: {months} شهر\nالرقم اللي حوّل: {from_phone}")
 
     return jsonify({'ok': True, 'msg': 'تم إرسال الطلب'})
 
@@ -250,7 +253,6 @@ def api_quran():
     q = load_json('quran.json', [])
     if not q:
         return jsonify({'surah': '-', 'ayah': '-', 'text': 'لا يوجد'})
-    import random
     return jsonify(random.choice(q))
 
 
@@ -320,11 +322,24 @@ def api_admin_handle():
     d = request.get_json() or {}
     r = RenewalRequest.query.get(d.get('id'))
     if not r: return jsonify({'ok': False}), 404
+
     if d.get('action') == 'approve':
         u = User.query.filter_by(card_number=r.card_number).first()
         if u:
             base = u.expiry if u.expiry and u.expiry > datetime.now().date() else datetime.now().date()
             u.expiry = base + timedelta(days=30 * r.months)
+            if r.from_phone:
+                u.phone = r.from_phone
+        else:
+            # مشترك جديد — نسجله
+            new_user = User(
+                phone=r.from_phone or '',
+                card_number=r.card_number,
+                name=r.name or '',
+                expiry=datetime.now().date() + timedelta(days=30 * r.months),
+                package='شهري'
+            )
+            db.session.add(new_user)
         r.status = 'approved'
     else:
         r.status = 'rejected'
@@ -343,8 +358,10 @@ def api_admin_add_user():
         exp = datetime.strptime(d.get('expiry', ''), '%Y-%m-%d').date()
     except:
         exp = datetime.now().date() + timedelta(days=30)
-    db.session.add(User(phone=d.get('phone'), card_number=d.get('card_number'),
-                        name=d.get('name'), expiry=exp, package=d.get('package', 'شهري')))
+    db.session.add(User(
+        phone=d.get('phone', ''), card_number=d.get('card_number'),
+        name=d.get('name', ''), expiry=exp, package=d.get('package', 'شهري')
+    ))
     db.session.commit()
     return jsonify({'ok': True})
 
