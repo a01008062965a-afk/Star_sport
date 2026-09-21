@@ -28,6 +28,7 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 .btn-row button{flex:1;padding:12px;font-size:14px;background:#2c5364;color:#fff;border-radius:10px;border:none;cursor:pointer;font-weight:bold}
 .file-info{font-size:12px;color:#2e7d32;text-align:center;margin-top:6px;display:none}
 .copied{background:#c8e6c9 !important;color:#2e7d32 !important}
+.new-user{background:#e3f2fd;color:#1565c0;padding:12px;border-radius:10px;text-align:center;font-size:13px;margin-bottom:12px;line-height:1.7}
 </style>
 </head>
 <body>
@@ -37,18 +38,14 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 <h2>💳 تجديد الاشتراك</h2>
 <label>🔒 الرقم الظاهر في القناة المشفرة</label>
 <input type="text" id="card1" placeholder="اكتب الرقم كامل" autocomplete="off">
-<button onclick="checkCard()">دخول</button>
+<button onclick="nextStep()">التالي ←</button>
 <a href="/support" class="support">📞 نسيته؟ تواصل مع الدعم</a>
 <a href="/" class="back">← رجوع للرئيسية</a>
 </div>
 
 <!-- شاشة 2 -->
 <div class="card hidden" id="s2">
-<h2>بيانات اشتراكك</h2>
-<div id="st"></div>
-<div class="info-row"><span>الاسم:</span><b id="n">-</b></div>
-<div class="info-row"><span>ينتهي:</span><b id="e">-</b></div>
-<div class="info-row"><span>فاضل:</span><b id="d">-</b></div>
+<div id="userInfo"></div>
 <label>اختر مدة التجديد</label>
 <select id="months">
 <option value="1">شهر واحد</option>
@@ -96,9 +93,11 @@ button{width:100%;padding:14px;font-size:17px;background:linear-gradient(90deg,#
 let curCard = null;
 let curFile = null;
 
-async function checkCard() {
+async function nextStep() {
     const c = document.getElementById('card1').value.trim();
     if (!c) return alert('ادخل الرقم المشفر');
+    curCard = c;
+
     try {
         const r = await fetch('/api/check-card', {
             method: 'POST',
@@ -106,14 +105,24 @@ async function checkCard() {
             body: JSON.stringify({card_number: c})
         });
         const d = await r.json();
-        if (!d.ok) return alert(d.msg);
-        curCard = c;
-        document.getElementById('n').textContent = d.user.name || '-';
-        document.getElementById('e').textContent = d.user.expiry;
-        document.getElementById('d').textContent = d.user.days_left > 0 ? d.user.days_left + ' يوم' : 'خلص';
-        const st = document.getElementById('st');
-        st.className = 'status ' + (d.user.status === 'active' ? 'active' : 'expired');
-        st.textContent = d.user.status === 'active' ? '✅ اشتراكك شغال' : '❌ الاشتراك خلص';
+        const box = document.getElementById('userInfo');
+        if (d.ok) {
+            box.innerHTML = `
+                <div class="status ${d.user.status === 'active' ? 'active' : 'expired'}">
+                    ${d.user.status === 'active' ? '✅ اشتراكك شغال' : '❌ الاشتراك خلص'}
+                </div>
+                <div class="info-row"><span>الاسم:</span><b>${d.user.name || '-'}</b></div>
+                <div class="info-row"><span>ينتهي:</span><b>${d.user.expiry}</b></div>
+                <div class="info-row"><span>فاضل:</span><b>${d.user.days_left > 0 ? d.user.days_left + ' يوم' : 'خلص'}</b></div>
+            `;
+        } else {
+            box.innerHTML = `
+                <div class="new-user">
+                    📝 <b>مشترك جديد</b><br>
+                    الرقم ده مش مسجل عندنا — بعد ما تحوّل، انتظر الموافقة وهيتم تسجيلك تلقائياً
+                </div>
+            `;
+        }
         document.getElementById('s1').classList.add('hidden');
         document.getElementById('s2').classList.remove('hidden');
     } catch(e) { alert('خطأ في الاتصال'); }
